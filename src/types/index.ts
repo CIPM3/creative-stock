@@ -5,3 +5,11 @@ export type StoreState = {
     removeAllBears: () => void;
     updateBears: (newBears: number) => void;
 };
+
+export type Cita = {
+    fecha: string;
+    hora: string;
+    nombre: string;
+    servicios: string[];
+    total: number
+  };
