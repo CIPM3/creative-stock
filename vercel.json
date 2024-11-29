@@ -3,5 +3,8 @@
     "env": {
       "DISABLE_LINTER": "true"
     }
+  },
+  "scripts": {
+    "deploy": "DISABLE_LINTER=true vercel --prod"
   }
 }
