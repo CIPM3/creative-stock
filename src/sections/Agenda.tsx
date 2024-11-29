@@ -1,12 +1,14 @@
 import { useRef, useState } from "react"
-import { Arrow, Filter } from "../assets/svg"
 import DayButton from "../components/buttons/day.button"
 import { obtenerDiasDeLaSemana } from "../funcs"
 import AgendarButton from "../components/buttons/agendar.button"
 import { FakeData } from "../data"
 import AgendaCard from "@/components/cards/agenda.card"
 import AgendarDialog from "@/components/dialog/agendar.dialog"
-import { Input } from "@/components/ui/input"
+import SearchInput from "@/components/inputs/search.input"
+import FiltroDropdown from "@/components/dropdown/filtro.dropdown"
+import { Cita } from "@/types"
+import AgendaItem from "@/components/cards/agenda.card.mes"
 
 
 const Agenda = () => {
@@ -14,9 +16,6 @@ const Agenda = () => {
   const citas = FakeData
 
   const [timeline, settimeline] = useState("semana")
-  const dialogRef = useRef<HTMLButtonElement>(null)
-
-  const Days = timeline === "semana" ? obtenerDiasDeLaSemana() : obtenerDiasDeLaSemana()
 
   // Función para filtrar y ordenar citas
   const filtrarYOrdenarCitas = (fechaFiltro: string) => {
@@ -57,52 +56,107 @@ const Agenda = () => {
         </div>
 
         <div className="flex flex-col items-end">
-          <Input />
-          <button className="flex w-36 h-14 items-center font-semibold text-xl border border-[#3C3C3C] rounded-lg mt-3 justify-center gap-2">
-            <Filter className="size-6 fill-[#3C3C3C]" />
-            Filtrar
-            <Arrow className="size-2 fill-[#3C3C3C]" />
-          </button>
+          <SearchInput />
+          <FiltroDropdown
+            array={[
+              'unas',
+              'corte',
+              'labial',
+              'masaje'
+            ]} />
         </div>
       </div>
 
       {/* SEMANA SECTION */}
-      <div className="w-full h-full px-[70px] pt-6 pb-6 bg-[#EAEAEA]">
-        {/* DIAS */}
-        <div className="w-full h-fit grid grid-cols-7 gap-3">
-          {
-            Days.map((day, index) => (
-              <DayButton key={index} day={day} />
-            ))
-          }
-        </div>
+      {
+        timeline === "semana"
+          ? (<AgendaSemanal filtrarYOrdenarCitas={filtrarYOrdenarCitas} />)
+          : (<AgendaMensual filtrarYOrdenarCitas={filtrarYOrdenarCitas} />)
+      }
 
-        {/* AGENDAR BUTTON */}
-        <div className="w-full h-fit grid grid-cols-7 pt-6 gap-3">
-          {
-            Days.map((index) => (
-              <AgendarButton key={index} onClick={() => { dialogRef.current?.click() }} />
-            ))
-          }
-        </div>
-
-        {/* CITAS */}
-        <div className="w-full h-fit grid grid-cols-7 gap-3">
-          {Days.map((day, index) => (
-            <div key={index} className="flex flex-col gap-3 pt-4">
-              {filtrarYOrdenarCitas(day.split(" ")[1]).map((cita, citaIndex) => (
-                <AgendaCard key={citaIndex} cita={cita} />
-              ))}
-            </div>
-          ))}
-        </div>
-
-        {/* DIALOG DE AGENDAR */}
-        <AgendarDialog dialogRef={dialogRef} />
-
-      </div>
     </div>
   )
 }
+
+interface ASProps {
+  timeline?: string,
+  filtrarYOrdenarCitas: (fechaFiltro: string) => Cita[]
+}
+
+const AgendaSemanal = ({ filtrarYOrdenarCitas }: ASProps) => {
+  const Days = obtenerDiasDeLaSemana()
+  const dialogRef = useRef<HTMLButtonElement>(null)
+
+  return (
+    <div className="w-full h-full min-h-[70vh] px-[70px] pt-6 pb-6 bg-[#EAEAEA]">
+      {/* DIAS */}
+      <div className="w-full h-fit grid grid-cols-7 gap-3">
+        {
+          Days.map((day, index) => (
+            <DayButton key={index} day={day} />
+          ))
+        }
+      </div>
+
+      {/* AGENDAR BUTTON */}
+      <div className="w-full h-fit grid grid-cols-7 pt-6 gap-3">
+        {
+          Days.map((index) => (
+            <AgendarButton key={index} onClick={() => { dialogRef.current?.click() }} />
+          ))
+        }
+      </div>
+
+      {/* CITAS */}
+      <div className="w-full h-fit grid grid-cols-7 gap-3">
+        {Days.map((day, index) => (
+          <div key={index} className="flex flex-col gap-3 pt-4">
+            {filtrarYOrdenarCitas(day.split(" ")[1]).map((cita, citaIndex) => (
+              <AgendaCard key={citaIndex} cita={cita} />
+            ))}
+          </div>
+        ))}
+      </div>
+
+      {/* DIALOG DE AGENDAR */}
+      <AgendarDialog dialogRef={dialogRef} />
+
+    </div>
+  )
+}
+
+const AgendaMensual = ({filtrarYOrdenarCitas}:ASProps) => {
+  const diasDelMes = new Date().getDate() + 1; // Obtener el número de días del mes actual
+  const primerDiaDelMes = new Date(new Date().getFullYear(), new Date().getMonth(), 1).getDay(); // Obtener el día de la semana del primer día del mes
+  const semanas = []; // Array para almacenar las semanas
+
+  // Crear un array de días, incluyendo espacios vacíos al inicio
+  const dias = Array(primerDiaDelMes).fill(null).concat(Array.from({ length: diasDelMes }, (_, i) => i + 1));
+
+  // Agrupar los días en semanas
+  for (let i = 0; i < dias.length; i += 7) {
+    semanas.push(dias.slice(i, i + 7));
+  }
+  
+  return (
+    <div className="w-full h-full px-[70px] pt-6 pb-6 bg-[#EAEAEA]">
+      {/* Renderizar el calendario */}
+      <div className="w-full h-fit place-content-center gap-3">
+        {semanas.map((semana, index) => (
+          <div key={index} className="grid grid-cols-7 gap-4 justify-between">
+            {semana.map((dia, diaIndex) => (
+              <div key={diaIndex} className={`w-full h-44 rounded-lg flex flex-col ${dia && 'border bg-white'} my-3`}>
+                {dia !== null && (
+                  <AgendaItem dia={dia} diaIndex={diaIndex} filtrarYOrdenarCitas={filtrarYOrdenarCitas} primerDiaDelMes={primerDiaDelMes} />
+                )}
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 
 export default Agenda

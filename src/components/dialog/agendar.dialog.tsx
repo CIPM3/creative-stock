@@ -19,7 +19,7 @@ const AgendarDialog = ({ dialogRef }: AgendarDialogProps) => {
     const [hora, sethora] = useState('AM')
 
     return (
-        <Dialog  key={'agendar dialog'}>
+        <Dialog key={'agendar dialog'}>
             <DialogTrigger className="hidden" ref={dialogRef}>Open</DialogTrigger>
             <DialogContent className="w-[70dvw] h-[70dvh] divide-x-[1px] divide-[#5e2727] flex gap-0 p-0 overflow-hidden">
                 <div className="w-1/2  flex justify-center items-center">
@@ -57,7 +57,7 @@ const AgendarDialog = ({ dialogRef }: AgendarDialogProps) => {
                     />
                     </div>
                     <div className="w-[73%] flex justify-start items-center gap-3">
-                        <WithLabel placeHolder="00:00" className="w-1/3 ring-0 ring-offset-0 placeholder:font-bold placeholder:text-xl" label="Hora" name="hora" type="text" />
+                        <WithLabel placeHolder="00:00" className="w-24 ring-0 ring-offset-0 placeholder:font-bold placeholder:text-xl" label="Hora" name="hora" type="text" />
                         
                         <div className=" h-fit mt-auto divide-x divide-[#707070]">
                             <button 

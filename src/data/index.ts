@@ -7,7 +7,7 @@ const FakeData = [
         ],
         hora:"9:00 AM",
         total: 1000,
-        fecha: "23/11/24"
+        fecha: "30/11/24"
       },
       {
         nombre: "Nombre Apellido",
@@ -16,7 +16,7 @@ const FakeData = [
         ],
         hora:"9:30 AM",
         total: 1000,
-        fecha: "23/11/24"
+        fecha: "30/11/24"
       },
       {
         nombre: "Nombre Apellido",
@@ -27,7 +27,7 @@ const FakeData = [
         ],
         hora:"10:00 AM",
         total: 1000,
-        fecha: "23/11/24"
+        fecha: "30/11/24"
       },
       {
         nombre: "Nombre Apellido",

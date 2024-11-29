@@ -6,7 +6,7 @@ const obtenerDiasDeLaSemana = () => {
   hoy.setDate(hoy.getDate() - (hoy.getDay() + 1));
   const diasConFechas = dias.map((dia, index) => {
     const fecha = new Date(hoy);
-    fecha.setDate(hoy.getDate() + index);
+    fecha.setDate(hoy.getDate() + index  + 1);
     return `${dia} ${fecha.getDate()}`;
   });
   return diasConFechas;
