@@ -1,10 +1,7 @@
 {
   "build": {
-    "env": {
+    "scripts": {
       "DISABLE_LINTER": "true"
     }
-  },
-  "scripts": {
-    "deploy": "DISABLE_LINTER=true vercel --prod"
   }
 }
