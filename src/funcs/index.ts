@@ -7,7 +7,8 @@ const obtenerDiasDeLaSemana = () => {
   const diasConFechas = dias.map((dia, index) => {
     const fecha = new Date(hoy);
     fecha.setDate(hoy.getDate() + index  + 1);
-    return `${dia} ${fecha.getDate()}`;
+    const diaConCero = fecha.getDate() < 10 ? `0${fecha.getDate()}` : fecha.getDate();
+    return `${dia} ${diaConCero}`;
   });
   return diasConFechas;
 };
@@ -42,8 +43,32 @@ const obtenerNombreServicio = (iconName:string) => {
   }
 }
 
+const obtenerPrecioServicio = (iconName: string) => {
+  if (iconName === "corte") {
+    return 20; // Precio para corte de cabello
+  }
+  if (iconName === "labial") {
+    return 30; // Precio para maquillaje
+  }
+  if (iconName === "masaje") {
+    return 50; // Precio para masaje
+  }
+  if (iconName === "unas") {
+    return 25; // Precio para uñas
+  }
+  return 0; // Precio por defecto si no coincide
+}
+
+const calcularTotalServicios = (servicios: string[]) => {
+  return servicios.reduce((total, servicio) => {
+    const precio = obtenerPrecioServicio(servicio);
+    return total + precio;
+  }, 0);
+}
+
 export {
   obtenerDiasDeLaSemana,
   obtenerIconoServicio,
-  obtenerNombreServicio
+  obtenerNombreServicio,
+  calcularTotalServicios
 }

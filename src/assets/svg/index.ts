@@ -6,6 +6,9 @@ import Search from './search';
 import Filter from './filter';
 import Arrow from './arrow';
 import Opc from './opc';
+import Close from './close';
+import Edit from './edit';
+import Trash from './trash';
 export {
     Calendario,
     Productos,
@@ -14,5 +17,8 @@ export {
     Search,
     Filter,
     Arrow,
-    Opc
+    Opc,
+    Close,
+    Edit,
+    Trash
 }

@@ -1,19 +1,22 @@
-import { Opc } from "@/assets/svg"
 import { RandomColors } from "@/data"
 import { obtenerIconoServicio } from "@/funcs"
 import { Cita } from "@/types"
+import CrudTooltipDropdown from "../dropdown/crud.tooltip.dropdown"
+import { RefObject } from "react"
 
 
 interface Props {
-  cita:Cita
+  cita: Cita,
+  dialogRef: RefObject<HTMLButtonElement>
 }
 
-const AgendaCard = ({cita}:Props) => {
+const AgendaCard = ({ cita, dialogRef }: Props) => {
+
   return (
     <div className="border border-black overflow-hidden rounded-lg">
-      <div className={`w-full ${RandomColors[Math.floor(Math.random() * RandomColors.length)]}  px-3 py-2 h-fit flex items-center justify-between`}>
+      <div className={`w-full relative ${RandomColors[Math.floor(Math.random() * RandomColors.length)]}  px-3 py-2 h-fit flex items-center justify-between`}>
         <h3 className="text-white text-sm font-bold">{cita.nombre}</h3>
-        <Opc className="size-4 cursor-pointer fill-white" />
+        <CrudTooltipDropdown dialogRef={dialogRef} cita={cita} />
       </div>
 
       <div className="bg-white px-2 py-2 flex items-start justify-between">
@@ -32,7 +35,7 @@ const AgendaCard = ({cita}:Props) => {
             cita.hora
           }</p>
           <p className="text-sm font-semibold text-[#9A9A9A] text-end">
-            ${cita.total}
+            {cita.total}
           </p>
         </div>
       </div>

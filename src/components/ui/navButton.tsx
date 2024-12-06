@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import {Calendario,Productos,Analiticas,Servicios} from "../../assets/svg";
 
 interface Props{
@@ -7,6 +8,8 @@ interface Props{
 }
 
 const navButton = ({type,name,selected}:Props) => {
+
+    const navigate = useNavigate()
 
     const getSVG = () => {
         switch (type) {
@@ -26,16 +29,16 @@ const navButton = ({type,name,selected}:Props) => {
     const handleClick = () => {
         switch (type) {
             case "calendario":
-                window.location.href = "/"
+                navigate('/')
                 break;
             case "productos":
-                window.location.href = "/productos"
+                navigate(`/${type}`)
                 break;
             case "servicios":
-                window.location.href = "/servicios"
+                navigate(`/${type}`)
                 break;
             case "analiticas":
-                window.location.href = "/analiticas"
+                navigate(`/${type}`)
                 break;
             default:
                 break;

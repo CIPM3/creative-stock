@@ -7,7 +7,7 @@ const FakeData = [
         ],
         hora:"9:00 AM",
         total: 1000,
-        fecha: "30/11/24"
+        fecha: "01/12/24"
       },
       {
         nombre: "Nombre Apellido",
@@ -16,7 +16,7 @@ const FakeData = [
         ],
         hora:"9:30 AM",
         total: 1000,
-        fecha: "30/11/24"
+        fecha: "01/12/24"
       },
       {
         nombre: "Nombre Apellido",
@@ -27,7 +27,7 @@ const FakeData = [
         ],
         hora:"10:00 AM",
         total: 1000,
-        fecha: "30/11/24"
+        fecha: "01/12/24"
       },
       {
         nombre: "Nombre Apellido",
@@ -38,7 +38,95 @@ const FakeData = [
         ],
         hora:"10:00 AM",
         total: 1000,
-        fecha: "24/11/24"
+        fecha: "01/12/24"
+      },
+      {
+        nombre: "Nombre Apellido",
+        servicios:[
+          'corte',
+          'masaje',
+          'unas'
+        ],
+        hora:"10:00 AM",
+        total: 1000,
+        fecha: "01/12/24"
+      },
+      {
+        nombre: "Uriel Gonzalez",
+        servicios:[
+          'corte',
+          'masaje',
+          'unas'
+        ],
+        hora:"10:00 AM",
+        total: 1000,
+        fecha: "05/12/24"
+      },
+      {
+        nombre: "Maria Duran",
+        servicios:[
+          'corte',
+          'masaje',
+          'unas'
+        ],
+        hora:"10:00 AM",
+        total: 1000,
+        fecha: "05/12/24"
+      },
+      {
+        nombre: "Uriel Gonzalez",
+        servicios:[
+          'corte',
+          'masaje',
+          'unas'
+        ],
+        hora:"10:00 AM",
+        total: 1000,
+        fecha: "05/12/24"
+      },
+      {
+        nombre: "Maria Duran",
+        servicios:[
+          'corte',
+          'masaje',
+          'unas'
+        ],
+        hora:"10:00 AM",
+        total: 1000,
+        fecha: "05/12/24"
+      },
+      {
+        nombre: "Uriel Gonzalez",
+        servicios:[
+          'corte',
+          'masaje',
+          'unas'
+        ],
+        hora:"10:00 AM",
+        total: 1000,
+        fecha: "05/12/24"
+      },
+      {
+        nombre: "Maria Duran",
+        servicios:[
+          'corte',
+          'masaje',
+          'unas'
+        ],
+        hora:"10:00 AM",
+        total: 1000,
+        fecha: "05/12/24"
+      },
+      {
+        nombre: "Nombre Apellido",
+        servicios:[
+          'corte',
+          'masaje',
+          'unas'
+        ],
+        hora:"10:00 AM",
+        total: 1000,
+        fecha: "02/12/24"
       },
       {
         nombre: "Nombre Apellido",
@@ -47,7 +135,7 @@ const FakeData = [
         ],
         hora:"9:00 AM",
         total: 1000,
-        fecha: "25/11/24"
+        fecha: "02/12/24"
       },
       {
         nombre: "Nombre Apellido",
@@ -56,7 +144,7 @@ const FakeData = [
         ],
         hora:"10:00 AM",
         total: 1000,
-        fecha: "25/11/24"
+        fecha: "02/12/24"
       },
       {
         nombre: "Nombre Apellido",
@@ -66,7 +154,7 @@ const FakeData = [
         ],
         hora:"10:00 AM",
         total: 1000,
-        fecha: "26/11/24"
+        fecha: "03/12/24"
       },
       {
         nombre: "Nombre Apellido",
@@ -76,7 +164,7 @@ const FakeData = [
         ],
         hora:"9:00 AM",
         total: 1000,
-        fecha: "28/11/24"
+        fecha: "04/12/24"
       },
 ]
 

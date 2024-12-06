@@ -1,30 +1,54 @@
-import { Opc } from "@/assets/svg";
+import { RefObject } from "react";
 import { RandomColors } from "@/data";
 import { Cita } from "@/types";
+import TooltipDropdown from "../dropdown/tooltip.dropdown";
+import CrudTooltipDropdown from "../dropdown/crud.tooltip.dropdown";
+import AgendaInfo from "../dropdown/agendaInfo.tooltip";
 
 interface Props{
     primerDiaDelMes:number,
-    dia:number,
+    dia:string,
     diaIndex:number,
-    filtrarYOrdenarCitas: (fechaFiltro: string) => Cita[]
+    filtrarYOrdenarCitas: (fechaFiltro: string) => Cita[],
+    dialogRef:RefObject<HTMLButtonElement>,
+    cancelarRef:RefObject<HTMLButtonElement>
 }
 
-const AgendaItem = ({primerDiaDelMes,dia,diaIndex,filtrarYOrdenarCitas}:Props) => {
+const AgendaItem = ({primerDiaDelMes,dia,diaIndex,filtrarYOrdenarCitas,dialogRef,cancelarRef}:Props) => {
     const nombresDias = ["dom", "lun", "mar", "mié", "jue", "vie", "sab"];
+
+    //obtiene un array con los datos de las citas
+    const filtro = filtrarYOrdenarCitas(`${dia}/${new Date().getMonth() + 1}/${new Date().getFullYear().toString().slice(-2)}`)
+    
 
     return (
         <>
-            <div className="w-full pt-4 flex items-center justify-center">
+            <div onClick={()=>dialogRef.current?.click()} className="w-full cursor-pointer pt-4 flex items-center justify-center">
                 <h3 className="font-light first-letter:uppercase text-[#3C3C3C]">{nombresDias[(diaIndex + primerDiaDelMes + 2) % 7]} {dia}</h3>
             </div>
 
-            <div className="flex flex-col px-2 gap-2 w-full h-full ">
-                {filtrarYOrdenarCitas(dia.toString()).map((cita) => (
-                    <div className={`w-full ${RandomColors[Math.floor(Math.random() * RandomColors.length)]} flex items-center justify-between font-semibold py-1 px-2 text-white  rounded-lg`}>
-                        {cita.nombre}
-                        <Opc className="size-4 fill-white"/>
-                    </div>
-                ))}
+            <div className="flex flex-col py-2 px-2 gap-2 w-full h-full ">
+                {filtro.length > 3 ? (
+                    <>
+                        {filtro.slice(0, 3).map((cita) => (
+                            <div className={`w-full ${RandomColors[Math.floor(Math.random() * RandomColors.length)]} flex items-center justify-between font-semibold py-1 px-2 text-white  rounded-lg`}>
+                                <AgendaInfo cita={cita}/>
+                                <CrudTooltipDropdown dialogRef={dialogRef} cancelarRef={cancelarRef} cita={cita}/>
+                            </div>
+                        ))}
+
+                        <TooltipDropdown
+                         array={filtro.slice(- (filtro.length - 3))}
+                        />
+                    </>
+                ) : (
+                    filtro.map((cita) => (
+                        <div className={`w-full ${RandomColors[Math.floor(Math.random() * RandomColors.length)]} flex items-center justify-between font-semibold py-1 px-2 text-white  rounded-lg`}>
+                            <AgendaInfo cita={cita}/>
+                            <CrudTooltipDropdown cancelarRef={cancelarRef} dialogRef={dialogRef} cita={cita}/>
+                        </div>
+                    ))
+                )}
             </div>
         </>
     )
