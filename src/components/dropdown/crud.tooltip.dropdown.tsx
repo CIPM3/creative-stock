@@ -1,4 +1,4 @@
-import { Edit, Opc, Trash } from "@/assets/svg"
+import { Edit, Opc } from "@/assets/svg"
 import {
     DropdownMenu,
     DropdownMenuContent,

@@ -9,7 +9,6 @@ import FiltroDropdown from "@/components/dropdown/filtro.dropdown"
 import { Cita } from "@/types"
 import AgendaItem from "@/components/cards/agenda.card.mes"
 import { useStore } from "@/store/store"
-import EliminarCitaDialog from "@/components/dialog/eliminarCita.dialog"
 
 const Agenda = () => {
 
