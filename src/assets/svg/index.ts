@@ -9,6 +9,10 @@ import Opc from './opc';
 import Close from './close';
 import Edit from './edit';
 import Trash from './trash';
+import CategoriaSvg from './Categoria.svg';
+import StockSvg from './stock.svg';
+import VentasSvg from './ventas.svg';
+import Entradas from './entradas.svg';
 export {
     Calendario,
     Productos,
@@ -20,5 +24,9 @@ export {
     Opc,
     Close,
     Edit,
-    Trash
+    Trash,
+    CategoriaSvg,
+    StockSvg,
+    VentasSvg,
+    Entradas
 }

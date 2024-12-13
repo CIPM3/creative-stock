@@ -168,6 +168,10 @@ const FakeData = [
       },
 ]
 
+const FakeDataProduct = [
+
+]
+
 const RandomColors = [
   'bg-[#336EB1]',
   'bg-[#B13398]',

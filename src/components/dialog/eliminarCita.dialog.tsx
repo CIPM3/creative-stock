@@ -1,6 +1,8 @@
+import { deleteCita } from "@/api/citas/citas.delete";
 import { Trash } from "@/assets/svg";
 import {
     Dialog,
+    DialogClose,
     DialogContent,
     DialogDescription,
     DialogFooter,
@@ -8,9 +10,42 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import { toast } from "@/hooks/use-toast";
+import { useStore } from "@/store/store";
+import { Cita } from "@/types";
+import { useMutation } from "@tanstack/react-query";
+import { useRef, useState } from "react";
 
-const EliminarCitaDialog = () => {
+interface Props{
+    cita:Cita
+}
 
+const EliminarCitaDialog = ({cita}:Props) => {
+    
+    const dialogRef = useRef<HTMLButtonElement>(null);
+    const [loading, setLoading] = useState(false);
+
+    const eliminarCita = useStore((state) => state.eliminarCita)
+
+
+    const mutationDelete = useMutation({
+        mutationFn: () => {
+            return deleteCita(cita.id!!);
+        }
+    });
+    
+    const handleDelete = async () => {
+        setLoading(true);
+        await mutationDelete.mutateAsync();
+        eliminarCita(cita.id!!)
+        setLoading(false)
+        toast({
+            title: "Éxito",
+            description: "Cita cancelada con éxito!"
+        });
+        dialogRef.current?.click()
+
+    };
     return (
         <Dialog>
             <DialogTrigger asChild>
@@ -22,16 +57,27 @@ const EliminarCitaDialog = () => {
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>Edit profile</DialogTitle>
+                    <DialogTitle className="text-red-500">Cancelar Cita</DialogTitle>
                     <DialogDescription>
-                        Make changes to your profile here. Click save when you're done.
+                        Estas seguro? estos cambios son irreversibles.
                     </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
 
                 </div>
-                <DialogFooter>
-                    <button type="submit">Save changes</button>
+                <DialogFooter className="flex items-center gap-3">
+                    <DialogClose ref={dialogRef}>
+                        <button 
+                        className="border border-red-500 py-2 px-4 rounded-lg
+                         text-red-500 hover:bg-red-500 transition-all hover:text-white" 
+                        type="submit">Cancelar</button>
+                    </DialogClose>
+                    <button 
+                    onClick={() => { handleDelete() }} 
+                    type="submit"
+                    className="py-2 px-4 rounded-lg bg-red-500
+                     text-white border border-red-500 hover:bg-white transition-all hover:text-red-500"
+                    >{loading ? 'Cargando...' : 'Confirmar'}</button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

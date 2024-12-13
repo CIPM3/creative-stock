@@ -5,11 +5,7 @@ export enum CitasMethod {
 }
 
 export type StoreState = {
-    bears: number;
-    increasePopulation: () => void;
-    decreasePopulation: () => void;
-    removeAllBears: () => void;
-    updateBears: (newBears: number) => void;
+    //CITAS
     citas: Cita[];
     cargarCitas: () => Promise<void>;
     agregarCita: (nuevaCita: Cita) => void;
@@ -19,7 +15,27 @@ export type StoreState = {
     actualizarCita: (actualizadaCita: Cita) => void;
     citasMethod: CitasMethod;
     cambiarCitasMethod: (citaMethod: CitasMethod) => void
+    //PRODUCTOS
+    productos: Product[];
+    cargarProduct: () => Promise<void>;
+    selectedFilter: string | null;
+    seleccionarFiltro: (categoria: string | null) => void;
+    searchInput: string | null;
+    searchInputProduct: (search:string | null) => void;
+    agregarProduct: (nuevoProducto: Product) => void;
+    eliminarProduct: (id: string) => void;
+    actualizarProduct: (prodcutoActualizado: Product) => void;
 };
+
+export type Product = {
+    id: string;
+    name: string;
+    category: string;
+    stock: number;
+    sells: number;
+    incomes: number;
+    fecha?: string
+}
 
 export type Cita = {
     id?: string;

@@ -47,7 +47,7 @@ const CrudTooltipDropdown = ({ cita, dialogRef }: Props) => {
                         <p className="font-light text-[#707070] text-xs first-letter:uppercase">Editar</p>
                     </div>
                 </DropdownMenuItem>
-                <EliminarCitaDialog />
+                <EliminarCitaDialog cita={cita} />
 
             </DropdownMenuContent>
         </DropdownMenu>

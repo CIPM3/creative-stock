@@ -66,9 +66,21 @@ const calcularTotalServicios = (servicios: string[]) => {
   }, 0);
 }
 
+const getCatColors = (categorie:string) => {
+  if(categorie === "cabello")
+      return 'text-[#BC1275] border-[#BC1275] bg-[#FFD4ED]'
+  if(categorie === "uñas")
+      return 'text-[#867A28] border-[#867A28] bg-[#FFF9D4]'
+  if(categorie === "maquillaje")
+      return 'text-[#2892B3] border-[#2892B3] bg-[#D4F5FF]'
+  
+  return 'text-[#7B49E0] border-[#7B49E0] bg-[#E2D4FF]'
+}
+
 export {
   obtenerDiasDeLaSemana,
   obtenerIconoServicio,
   obtenerNombreServicio,
-  calcularTotalServicios
+  calcularTotalServicios,
+  getCatColors
 }
