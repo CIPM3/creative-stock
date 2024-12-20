@@ -83,7 +83,7 @@ const Producto = () => {
                             Ventas de hoy
                         </div>
                         <div className="flex  items-center text-3xl gap-x-2 font-semibold text-[#3C3C3C]">
-                            <span className="text-[#19AD0F]">${movementsOfDay.salidaDeStock * precioOfProduct?.precioVenta!!}</span>
+                            <span className="text-[#19AD0F]">${movementsOfDay?.salidaDeStock!! * precioOfProduct?.precioVenta!!}</span>
                         </div>
                     </div>
                     <div className="w-full pl-10 col-start-3 col-end-5 flex items-start justify-between">
@@ -93,7 +93,7 @@ const Producto = () => {
                                 Salida
                             </div>
                             <div className="flex  items-center text-3xl gap-x-2 font-semibold text-[#3C3C3C]">
-                                <span className="text-[#DD1313]">${movementsOfDay.entradaDeStock * precioOfProduct?.precioCompra!! }</span>
+                                <span className="text-[#DD1313]">${movementsOfDay?.entradaDeStock!! * precioOfProduct?.precioCompra!! }</span>
                             </div>
                         </div>
                         <div className="w-full flex flex-col h-full items-end justify-start">
