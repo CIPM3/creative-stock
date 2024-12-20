@@ -11,91 +11,65 @@ import AgendaItem from "@/components/cards/agenda.card.mes"
 import { useStore } from "@/store/store"
 
 const Agenda = () => {
-
   const cargarCitas = useStore((state) => state.cargarCitas)
+  const citas = useStore((state) => state.citas)
+
+  const [searchClient, setSearchClient] = useState("")
+  const [timeline, setTimeline] = useState("semana")
+  const [selectedFilter, setSelectedFilter] = useState("")
+
   // Cargar citas al montar el componente
   useEffect(() => {
     cargarCitas();
   }, [cargarCitas]);
-  
-  const citas = useStore((state) => state.citas)
-
-  const [SearchClient, setSearchClient] = useState("")
-
-  const [timeline, settimeline] = useState("semana")
-  const [selectedFilter, setselectedFilter] = useState("")
 
   // Función para filtrar y ordenar citas
   const filtrarYOrdenarCitas = (fechaFiltro: string) => {
-    // Convertir fechaFiltro a formato "DD/MM/YY"
     const [diaFiltro, mesFiltro, anioFiltro] = fechaFiltro.split('/');
-
-    const citasFiltradasPorDia = citas.filter(cita => {
+    return citas.filter(cita => {
       const [diaCita, mesCita, anioCita] = cita.fecha.split('/');
-      const nombreFiltro = SearchClient; // Cambia esto por el nombre que deseas filtrar
-      const servicioFiltro = selectedFilter; // Obtener el servicio seleccionado
-      return diaCita === diaFiltro && mesCita === mesFiltro && anioCita === anioFiltro && 
-             (!nombreFiltro || cita.nombre.toLowerCase().includes(nombreFiltro.toLocaleLowerCase())) &&
-             (!servicioFiltro || cita.servicios.includes(servicioFiltro)); // Filtrar por servicio
+      const nombreFiltro = searchClient.toLowerCase();
+      const servicioFiltro = selectedFilter;
+      return diaCita === diaFiltro && mesCita === mesFiltro && anioCita === anioFiltro &&
+             (!nombreFiltro || cita.nombre.toLowerCase().includes(nombreFiltro)) &&
+             (!servicioFiltro || cita.servicios.includes(servicioFiltro));
+    }).sort((a, b) => {
+      const horaA = convertirAHora24(a.hora);
+      const horaB = convertirAHora24(b.hora);
+      return horaA - horaB;
     });
+  };
 
-    // Ordenar las citas filtradas por hora
-    const citasOrdenadas = citasFiltradasPorDia.sort((a, b) => {
-      const [horaA, periodoA] = a.hora.split(" ");
-      const [horaB, periodoB] = b.hora.split(" ");
-      const [horaAInt, minutoA] = horaA.split(":").map(Number);
-      const [horaBInt, minutoB] = horaB.split(":").map(Number);
-
-      // Convertir a 24 horas para comparación
-      const horaA24 = periodoA === "PM" && horaAInt < 12 ? horaAInt + 12 : horaAInt;
-      const horaB24 = periodoB === "PM" && horaBInt < 12 ? horaBInt + 12 : horaBInt;
-
-      // Comparar horas y minutos
-      if (horaA24 === horaB24) {
-        return minutoA - minutoB;
-      }
-      return horaA24 - horaB24;
-    });
-
-    return citasOrdenadas;
+  const convertirAHora24 = (hora: string) => {
+    const [horaInt, periodo] = hora.split(" ");
+    const [horaNum, minuto] = horaInt.split(":").map(Number);
+    return (periodo === "PM" && horaNum < 12 ? horaNum + 12 : horaNum) * 60 + minuto; // Convertir a minutos
   };
 
   return (
-    <div className="w-full min-h-[90dvh]  ">
+    <div className="w-full min-h-[90dvh]">
       <div className="flex items-center px-[70px] pt-[37px] pb-6 justify-between">
-        <div className="flex flex-col w-1/2 ">
+        <div className="flex flex-col w-1/2">
           <h2 className="text-4xl font-semibold text-[#3C3C3C]">Agenda</h2>
           <div className="flex items-center gap-4 pt-3">
-            <button onClick={() => { settimeline("semana") }} className={`w-32 transition-all h-14 rounded-xl font-light border ${timeline === "semana" ? "bg-[#d7e5f3] border-[#336EB1] text-[#336EB1]" : "border-[#707070] text-[#707070] bg-[#eaeaea]"}`}>Semana</button>
-            <button onClick={() => { settimeline("mes") }} className={`w-32 transition-all h-14 rounded-xl font-light border ${timeline === "mes" ? "bg-[#d7e5f3] border-[#336EB1] text-[#336EB1]" : "border-[#707070] text-[#707070] bg-[#eaeaea]"}`}>Mes</button>
-
+            <button onClick={() => setTimeline("semana")} className={`w-32 transition-all h-14 rounded-xl font-light border ${timeline === "semana" ? "bg-[#d7e5f3] border-[#336EB1] text-[#336EB1]" : "border-[#707070] text-[#707070] bg-[#eaeaea]"}`}>Semana</button>
+            <button onClick={() => setTimeline("mes")} className={`w-32 transition-all h-14 rounded-xl font-light border ${timeline === "mes" ? "bg-[#d7e5f3] border-[#336EB1] text-[#336EB1]" : "border-[#707070] text-[#707070] bg-[#eaeaea]"}`}>Mes</button>
           </div>
         </div>
 
         <div className="flex flex-col w-1/2 overflow-hidden relative items-end">
-          <SearchInput onChange={(e) => {
-            // Aquí tu lógica de búsqueda
-            setSearchClient(e.target.value)
-          }} />
+          <SearchInput onChange={(e) => setSearchClient(e.target.value)} />
           <FiltroDropdown
-            setselectedFilter={setselectedFilter}
+            setselectedFilter={setSelectedFilter}
             selectedFilter={selectedFilter}
-            array={[
-              'unas',
-              'corte',
-              'labial',
-              'masaje'
-            ]} />
+            array={['unas', 'corte', 'labial', 'masaje']} />
         </div>
       </div>
 
-      {/* SEMANA SECTION */}
-      {
-        timeline === "semana"
-          ? (<AgendaSemanal filtrarYOrdenarCitas={filtrarYOrdenarCitas} />)
-          : (<AgendaMensual filtrarYOrdenarCitas={filtrarYOrdenarCitas} />)
+      {timeline === "semana"
+        ? (<AgendaSemanal filtrarYOrdenarCitas={filtrarYOrdenarCitas} />)
+        : (<AgendaMensual filtrarYOrdenarCitas={filtrarYOrdenarCitas} />)
       }
-
     </div>
   )
 }

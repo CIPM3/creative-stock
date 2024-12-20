@@ -21,6 +21,9 @@ import { useRef, useState } from "react"
 import { getCatColors } from "@/funcs"
 import { GIVProducts, VSProducts } from "@/libs/formik.validation";
 import { useStore } from "@/store/store";
+import { useMutation } from "@tanstack/react-query";
+import { updateProduct } from "@/api/productos/productos.update";
+import { deleteProduct } from "@/api/productos/producto.delete";
 
 interface Props {
     type: string,
@@ -42,17 +45,29 @@ const EditDeleteDialog = ({ type, product }: Props) => {
     const [loading, setLoading] = useState(false);
     const dialogRef = useRef<HTMLButtonElement>(null);
 
-    const editarProducto = useStore((state)=> state.actualizarProduct)
-    const eliminarProducto = useStore((state)=> state.eliminarProduct)
+    const editarProducto = useStore((state) => state.actualizarProduct)
+    const eliminarProducto = useStore((state) => state.eliminarProduct)
+
+    const mutationUpdate = useMutation<Product, Error, Product>({
+        mutationFn: (finalData) => updateProduct(product.id,finalData)
+    });
+
+    const mutationDelete = useMutation<Product | null, Error, Product>({
+        mutationFn: (finalData: Product) => deleteProduct(finalData.id).then(() => {
+            return null; // O retornar un objeto que cumpla con Product si es necesario
+        })
+    });
 
     const handleSubmit = async (values: any) => {
         setLoading(true)
-        if(type === "editar"){
+        if (type === "editar") {
             editarProducto(values)
+            mutationUpdate.mutateAsync(values)
         }
 
-        if(type === "eliminar"){
-            eliminarProducto(values.id)
+        if (type === "eliminar") {
+            mutationDelete.mutateAsync(product)
+            eliminarProducto(product.id)
         }
         dialogRef.current?.click()
         setLoading(false)
@@ -152,12 +167,12 @@ const EditDeleteDialog = ({ type, product }: Props) => {
                                 {type === "eliminar" && (
                                     <button type="submit" className="px-6 py-2 text-red-500 flex items-center gap-x-1">
                                         <Trash className="size-4 text-red-500" />
-                                        {loading ? <Loader2 className="size-3 animate-spin"/> : "Eliminar"}
+                                        {loading ? <Loader2 className="size-3 animate-spin" /> : "Eliminar"}
                                     </button>)}
                                 {type === "editar" && (
                                     <button disabled={loading} type="submit" className="px-6 py-2 text-[#0077FF] border-[1px] border-[#0077FF] rounded-lg">
-                                        {loading ? <Loader2 className="size-3 animate-spin"/> : "Actualizar"}
-                                        
+                                        {loading ? <Loader2 className="size-3 animate-spin" /> : "Actualizar"}
+
                                     </button>)}
                             </div>
                         </Form>

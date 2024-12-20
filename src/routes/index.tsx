@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { Agenda,Productos,Servicios,Analiticas} from "../sections";
 import Navigation from '@/components/ui/navigation';
+import Producto from '@/sections/Producto';
 
 const Rutas = () => {
     return (
@@ -9,6 +10,7 @@ const Rutas = () => {
             <Routes>
                 <Route path="/" element={<Agenda/>} />
                 <Route path="/productos" element={<Productos/>} />
+                <Route path="/productos/:id" element={<Producto/>} />
                 <Route path="/servicios" element={<Servicios/>} />
                 <Route path="/analiticas" element={<Analiticas/>} />
             </Routes>

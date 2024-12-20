@@ -39,7 +39,13 @@ export function ProductsTable() {
 
     const SelectedFilter = useStore((state) => state.selectedFilter)
     const Products = useStore((state) => state.productos)
+    const CargarProducts = useStore((state) => state.cargarProduct)
     const searchProduct = useStore((state) => state.searchInput)
+
+    useEffect(() => {
+      CargarProducts()
+    }, [])
+    
 
     const [Productos, setProductos] = useState<Product[]>([])
     const [paginaActual, setPaginaActual] = useState(1);
@@ -61,79 +67,50 @@ export function ProductsTable() {
         let productosFiltrados: Product[] = Products;
 
         // BUSQUEDA POR NOMBRE
-        if (searchProduct !== null && searchProduct.trim() !== "") {
+        if (searchProduct?.trim()) {
             const searchNormalized = searchProduct.toLocaleLowerCase();
-
-            productosFiltrados = productosFiltrados.filter(producto => {
-                const nombreProductoNormalized = producto.name.toLocaleLowerCase();
-                return nombreProductoNormalized.includes(searchNormalized);
-            });
+            productosFiltrados = productosFiltrados.filter(producto => 
+                producto.name.toLocaleLowerCase().includes(searchNormalized)
+            );
         }
 
         // BUSQUEDA POR CATEGORIA
-        if (categoria !== null && categoria.trim() !== "") {
-            const categoriaNormalized = categoria.toLocaleLowerCase();
-            const categoriasValidas = ["cabello", "uñas", "maquillaje", "otros"];
+        const categoriasValidas: { [key: string]: string } = {
+            "cabello": "category",
+            "uñas": "category",
+            "maquillaje": "category",
+            "otros": "category",
+            "stock bajo": "stock",
+            "stock alto": "stock",
+            "mayor venta": "sells",
+            "menor venta": "sells",
+            "entrada alta": "incomes",
+            "entrada baja": "incomes"
+        };
 
-            if (categoriasValidas.includes(categoriaNormalized)) {
+        if (categoria?.trim() && categoriasValidas[categoria.toLocaleLowerCase()]) {
+            const categoriaNormalized = categoria.toLocaleLowerCase();
+            if (["stock bajo", "stock alto"].includes(categoriaNormalized)) {
+                productosFiltrados.sort((a, b) => 
+                    categoriaNormalized === "stock bajo" ? a.stock - b.stock : b.stock - a.stock
+                );
+            } else if (["mayor venta", "menor venta"].includes(categoriaNormalized)) {
+                productosFiltrados.sort((a, b) => 
+                    categoriaNormalized === "mayor venta" ? b.sells - a.sells : a.sells - b.sells
+                );
+            } else if (["entrada alta", "entrada baja"].includes(categoriaNormalized)) {
+                productosFiltrados.sort((a, b) => 
+                    categoriaNormalized === "entrada alta" ? b.incomes - a.incomes : a.incomes - b.incomes
+                );
+            } else {
                 productosFiltrados = productosFiltrados.filter(producto =>
                     producto.category.toLocaleLowerCase() === categoriaNormalized
                 );
             }
         }
 
-        // BUSQUEDA POR STOCK //TODO
-        if (categoria !== null && categoria.trim() !== "") {
-            const categoriaNormalized = categoria.toLocaleLowerCase();
-            const categoriasValidas = ["stock bajo", "stock alto"];
-
-            if (categoriasValidas.includes(categoriaNormalized)) {
-                if (categoriaNormalized === "stock bajo") {
-                    productosFiltrados = [...productosFiltrados].sort((a, b) => a.stock - b.stock);
-                } else if (categoriaNormalized === "stock alto") {
-                    productosFiltrados = [...productosFiltrados].sort((a, b) => b.stock - a.stock);
-                }
-
-            }
-        }
-
-        // BUSQUEDA POR VENTA //TODO
-        if (categoria !== null && categoria.trim() !== "") {
-            const categoriaNormalized = categoria.toLocaleLowerCase();
-            const categoriasValidas = ["mayor venta", "menor venta"];
-
-            if (categoriasValidas.includes(categoriaNormalized)) {
-                if (categoriaNormalized === "mayor venta") {
-                    productosFiltrados = [...productosFiltrados].sort((a, b) => b.sells - a.sells)
-                }
-                if (categoriaNormalized === "menor venta") {
-                    productosFiltrados = [...productosFiltrados].sort((a, b) => a.sells - b.sells)
-                }
-            }
-
-        }
-
-        // BUSQUEDA POR ENTRADA //TODO
-        if (categoria !== null && categoria.trim() !== "") {
-            const categoriaNormalized = categoria.toLocaleLowerCase();
-            const categoriasValidas = ["entrada alta", "entrada baja"];
-
-            if (categoriasValidas.includes(categoriaNormalized)) {
-                if (categoriaNormalized === categoriasValidas[0]) {
-                    productosFiltrados = [...productosFiltrados].sort((a, b) => b.incomes - a.incomes)
-                }
-                if (categoriaNormalized === categoriasValidas[1]) {
-                    productosFiltrados = [...productosFiltrados].sort((a, b) => a.incomes - b.incomes)
-                }
-            }
-        }
-
         // Si después de filtrar, no hay productos, retornar todos los productos
-        if (productosFiltrados.length === 0) {
-            productosFiltrados = Products;
-        }
-
-        return productosFiltrados;
+        return productosFiltrados.length ? productosFiltrados : Products;
     };
 
     useEffect(() => {

@@ -13,7 +13,7 @@ const Navigation = () => {
         <NavButton
           name='Productos'
           type='productos'
-          selected={location.pathname === "/productos"}
+          selected={location.pathname.includes("productos")}
         />
         <NavButton
           name='Servicios'

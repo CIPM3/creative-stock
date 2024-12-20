@@ -20,6 +20,10 @@ import { getCatColors } from "@/funcs"
 import { Arrow } from "@/assets/svg"
 import { GIVProducts, VSProducts } from "@/libs/formik.validation";
 import { useStore } from "@/store/store";
+import { useMutation } from "@tanstack/react-query";
+import { Product } from "@/types";
+import { createProduct } from "@/api/productos/producto.create";
+import { toast } from "@/hooks/use-toast";
 
 
 const AgregarProductDialog = () => {
@@ -35,13 +39,21 @@ const AgregarProductDialog = () => {
   const [loading, setLoading] = useState(false);
   const dialogRef = useRef<HTMLButtonElement>(null);
 
-  const agregarProducto = useStore((state)=> state.agregarProduct)
+  const agregarProducto = useStore((state) => state.agregarProduct)
+
+  const mutation = useMutation<Product, Error, Product>({
+    mutationFn: (finalData) => createProduct(finalData)
+  });
 
   const handleSubmit = async (values: any) => {
     setLoading(true);
-    //alert(JSON.stringify(values))
     agregarProducto(values)
+    mutation.mutateAsync(values)
     dialogRef.current?.click()
+    toast({
+      title: "Éxito",
+      description: "Producto creado con éxito!"
+    });
     setLoading(false);
   }
   return (
@@ -71,7 +83,7 @@ const AgregarProductDialog = () => {
 
               <DropdownMenu>
                 <DropdownMenuTrigger className="w-full items-center justify-start">
-                  <div className={`w-full border-[1px] px-2 flex items-center justify-between ${errors.category ? "border-red-500": "border-[#707070]"} rounded-lg py-1.5`}>
+                  <div className={`w-full border-[1px] px-2 flex items-center justify-between ${errors.category ? "border-red-500" : "border-[#707070]"} rounded-lg py-1.5`}>
                     {
                       selectedItem === null
                         ?
@@ -94,9 +106,9 @@ const AgregarProductDialog = () => {
                   {
                     categories.map((categorie, index) => (
                       <DropdownMenuItem onClick={() => {
-                          setselectedItem(categorie)
-                          setFieldValue('category',categorie)
-                          }} key={index}>
+                        setselectedItem(categorie)
+                        setFieldValue('category', categorie)
+                      }} key={index}>
                         <span className={`text-sm font-light border-[1px] ${getCatColors(categorie)} px-6 flex items-center justify-center py-1 rounded-full`}>
                           {categorie}
                         </span>
@@ -119,7 +131,7 @@ const AgregarProductDialog = () => {
 
               <div className="flex justify-end">
                 <button type="submit" disabled={loading} className="px-10 py-2 text-white border-[1px] bg-[#0077FF] rounded-lg" >
-                  {loading ? <Loader2 className="size-5 animate-spin"/> : 'Agregar'}
+                  {loading ? <Loader2 className="size-5 animate-spin" /> : 'Agregar'}
                 </button>
               </div>
 

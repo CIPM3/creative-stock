@@ -1,13 +1,13 @@
 import { useNavigate } from "react-router-dom";
-import {Calendario,Productos,Analiticas,Servicios} from "../../assets/svg";
+import { Calendario, Productos, Analiticas, Servicios } from "../../assets/svg";
 
-interface Props{
-    type:"calendario"|"productos"|"servicios"|"analiticas",
-    name:string,
-    selected:boolean
+interface Props {
+    type: "calendario" | "productos" | "servicios" | "analiticas"|'no',
+    name: string,
+    selected: boolean
 }
 
-const navButton = ({type,name,selected}:Props) => {
+const navButton = ({ type, name, selected }: Props) => {
 
     const navigate = useNavigate()
 
@@ -51,9 +51,9 @@ const navButton = ({type,name,selected}:Props) => {
                 {getSVG()}
                 <h3 className={`${selected ? "text-blue-500" : "text-[#3C3C3C]"} font-semibold`}>{name}</h3>
             </div>
-            
+
             <div className={`w-full h-1 ${selected ? "bg-blue-500" : ""}  rounded-t-lg mt-3`} />
-            
+
         </div>
     )
 }

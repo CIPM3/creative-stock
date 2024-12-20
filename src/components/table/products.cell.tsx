@@ -2,17 +2,21 @@ import { getCatColors } from "@/funcs"
 import { Product } from "@/types"
 import AgregarStock from "../dropdown/agregarStock.dialog"
 import EditarProductoTable from "../dialog/editarProduct.dropdown"
+import { useNavigate } from "react-router-dom"
 
 interface TableCellProps {
     product: Product
 }
 
 const TableCell = ({ product }: TableCellProps) => {
+
+    const navigate = useNavigate()
+
     return (
         <div
             key={product.id}
             className="grid grid-cols-8 w-full col-start-1 col-end-9 items-center border-b-[1px] border-[#707070] py-2">
-            <div className="col-start-1 text-xl col-end-3 pl-20 text-[#707070] font-semibold">
+            <div onClick={()=>navigate(`/productos/${product.id}`)} className="col-start-1 cursor-pointer text-xl col-end-3 pl-20 text-[#707070] font-semibold">
                 {product.name}
             </div>
             <div className="col-start-3 text-sm">
@@ -36,7 +40,7 @@ const TableCell = ({ product }: TableCellProps) => {
                 </span>
             </div>
             <div className="col-start-7 col-end-9 flex gap-x-1 items-center justify-end pr-5">
-                <AgregarStock/>
+                <AgregarStock product={product}/>
                 <EditarProductoTable product={product}/>
             </div>
         </div>

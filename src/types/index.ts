@@ -19,12 +19,20 @@ export type StoreState = {
     productos: Product[];
     cargarProduct: () => Promise<void>;
     selectedFilter: string | null;
+    selectedProduct: Product | null;
     seleccionarFiltro: (categoria: string | null) => void;
+    selectProducto: (id: string ) => void;
     searchInput: string | null;
     searchInputProduct: (search:string | null) => void;
     agregarProduct: (nuevoProducto: Product) => void;
     eliminarProduct: (id: string) => void;
     actualizarProduct: (prodcutoActualizado: Product) => void;
+    //STOCK
+    stock: Stock[],
+    cargarStock: () => Promise<void>;
+    //Precios
+    precios: Precio[],
+    cargarPrecios: () => Promise<void>;
 };
 
 export type Product = {
@@ -53,4 +61,26 @@ export type CitaInput = {
     hora: string;
     total: string;
     fecha: string;
+}
+
+export type Stock = {
+    id:string,
+    cantidad:number,
+    fecha: string,
+    productoId:string,
+    tipo:string
+}
+
+export type Precio = {
+    id:string,
+    precioCompra: number,
+    precioVenta: number,
+    productId:string
+}
+
+export interface StockSummary {
+    date: string;
+    entradaDeStock: number;
+    salidaDeStock: number;
+    productID: string;
 }
