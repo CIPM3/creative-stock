@@ -1,8 +1,9 @@
 import { RandomColors } from "@/data"
 import { obtenerIconoServicio } from "@/funcs"
-import { Cita } from "@/types"
+import { Cita, Servicio } from "@/types"
 import CrudTooltipDropdown from "../dropdown/crud.tooltip.dropdown"
-import { RefObject } from "react"
+import { RefObject, useEffect, useState } from "react"
+import { useServiciosStore } from "@/store/store"
 
 
 interface Props {
@@ -11,6 +12,16 @@ interface Props {
 }
 
 const AgendaCard = ({ cita, dialogRef }: Props) => {
+  const cargarServicios = useServiciosStore((state) => state.cargarServicios)
+  const getServiciosByCita = useServiciosStore((state) => state.getServiciosByCita)
+
+  const [ServiciosByCita, setServiciosByCita] = useState<Servicio[]>([])
+
+  useEffect(() => {
+    cargarServicios()
+    setServiciosByCita(getServiciosByCita(cita.servicios))
+  }, [cita.servicios])
+
 
   return (
     <div className="border border-black overflow-hidden rounded-lg">
@@ -22,9 +33,11 @@ const AgendaCard = ({ cita, dialogRef }: Props) => {
       <div className="bg-white px-2 py-2 flex items-start justify-between">
         <div className="grid grid-cols-2 w-1/2 gap-1">
           {
-            cita.servicios.map(servicio => (
-              <div className="size-10 border flex items-center justify-center border-black rounded-lg">
-                <img src={obtenerIconoServicio(servicio)} alt={servicio} className=" size-7 object-cover" />
+            ServiciosByCita.map(servicio => (
+              <div className="size-10 relative cursor-pointer border group flex items-center justify-center  border-black rounded-lg group-hover:bg-gray-200">
+                <img src={obtenerIconoServicio(servicio.category)} alt={servicio.id} className=" size-7 object-cover" />
+                <span className="absolute text-[12px] bg-white hidden group-hover:block left-10 top-0 z-10">{servicio.name}</span>
+
               </div>
             ))
           }

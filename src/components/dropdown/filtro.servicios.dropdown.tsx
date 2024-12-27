@@ -1,14 +1,15 @@
-import { Arrow, Entradas, Filter, StockSvg, VentasSvg } from "@/assets/svg"
+import { Arrow, Calendario, Filter } from "@/assets/svg"
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { useProductosStore } from "@/store/store"
+import { obtenerIconoServicio } from "@/funcs"
+import { useServiciosStore } from "@/store/store"
 import { useEffect, useState } from "react"
 
-const FiltroProductsDropdown = () => {
+const FiltroServiciosDropdown = () => {
 
     const [SelectedFilter, setSelectedFilter] = useState<number | null>(null)
 
@@ -18,48 +19,32 @@ const FiltroProductsDropdown = () => {
             name: "Valor por defecto"
         },
         {
-            icon: <div className="size-3 rounded-full border-[1px] border-[#867A28] bg-[#FFF9D4]" />,
+            icon: <img className="size-5" src={obtenerIconoServicio('unas')}/>,
             name: "Uñas"
         },
         {
-            icon: <div className="size-3 rounded-full border-[1px] border-[#BC1275] bg-[#FFD4ED]" />,
+            icon: <img className="size-5" src={obtenerIconoServicio('corte')}/>,
             name: "Cabello"
         },
         {
-            icon: <div className="size-3 rounded-full border-[1px] border-[#2892B3] bg-[#D4F5FF]" />,
+            icon: <img className="size-5" src={obtenerIconoServicio('labial')}/>,
             name: "Maquillaje"
         },
         {
-            icon: <div className="size-3 rounded-full border-[1px] border-[#7B49E0] bg-[#E2D4FF]" />,
-            name: "Otros"
+            icon: <img className="size-5" src={obtenerIconoServicio('masaje')}/>,
+            name: "Masaje"
         },
         {
-            icon: <StockSvg className="stroke-red-500" />,
-            name: "Stock bajo"
+            icon: <Calendario className="fill-green-500" />,
+            name: "Más agendados"
         },
         {
-            icon: <StockSvg className="stroke-green-500" />,
-            name: "Stock alto"
-        },
-        {
-            icon: <VentasSvg className="fill-green-500" />,
-            name: "Mayor venta"
-        },
-        {
-            icon: <VentasSvg className="fill-red-500" />,
-            name: "Menor venta"
-        },
-        {
-            icon: <Entradas className="fill-green-500" />,
-            name: "Entrada alta"
-        },
-        {
-            icon: <Entradas className="fill-red-500" />,
-            name: "Entrada baja"
+            icon: <Calendario className="fill-red-500" />,
+            name: "menos agendados"
         },
     ]
 
-    const seleccionarFiltro = useProductosStore((state) => state.seleccionarFiltro)
+    const seleccionarFiltro = useServiciosStore((state) => state.seleccionarFiltro)
 
     useEffect(() => {
         if (SelectedFilter! >= 0 && SelectedFilter !== null) {
@@ -131,4 +116,4 @@ const FiltroProductsDropdown = () => {
     )
 }
 
-export default FiltroProductsDropdown
+export default FiltroServiciosDropdown

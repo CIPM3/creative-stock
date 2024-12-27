@@ -1,10 +1,10 @@
 import SearchInput from "@/components/inputs/search.input"
 import { ProductsTable } from "@/components/table/products.table"
-import { useStore } from "@/store/store"
+import { useProductosStore } from "@/store/store"
 
 const Productos = () => {
 
-  const searchInputProduct = useStore((state)=> state.searchInputProduct)
+  const searchInputProduct = useProductosStore((state)=> state.searchInputProduct)
 
   return (
     <div className="w-full min-h-[90dvh]">

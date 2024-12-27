@@ -4,17 +4,16 @@ import {
     DialogContent,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import { RefObject, useState } from "react"
+import { RefObject, useEffect, useState } from "react"
 import { Calendar } from "@/components/ui/calendar"
 import { es } from "date-fns/locale"
 import WithLabel from "../inputs/withLabel.input";
 import SelectCustom from "../selects/SelectCustom";
 import { validationSchema, getInitialValues } from '@/libs/formik.validation';
-import { calcularTotalServicios } from '@/funcs';
 import { useMutation } from '@tanstack/react-query';
 import { createCita } from '@/api/citas/citas.create'
-import { CitaInput, CitasMethod } from '@/types';
-import { useStore } from '@/store/store';
+import { CitaInput, CitasMethod,Servicio } from '@/types';
+import { useCitasStore, useServiciosStore } from '@/store/store';
 import { toast } from "@/hooks/use-toast"
 import { updateCita } from '@/api/citas/citas.update';
 
@@ -33,12 +32,20 @@ const AgendarDialog = ({ dialogRef }: AgendarDialogProps) => {
 
     const [loading, setLoading] = useState(false);
 
-    const agregarCita = useStore((state) => state.agregarCita)
-    const selectedCita = useStore((state) => state.selectedCita)
-    const citasMethod = useStore((state) => state.citasMethod)
-    const cambiarCitasMethod = useStore((state) => state.cambiarCitasMethod)
-    const seleccionarCita = useStore((state) => state.seleccionarCita)
-    const actualizarCita = useStore((state) => state.actualizarCita)
+    const agregarCita = useCitasStore((state) => state.agregarCita)
+    const selectedCita = useCitasStore((state) => state.selectedCita)
+    const citasMethod = useCitasStore((state) => state.citasMethod)
+    const cambiarCitasMethod = useCitasStore((state) => state.cambiarCitasMethod)
+    const seleccionarCita = useCitasStore((state) => state.seleccionarCita)
+    const actualizarCita = useCitasStore((state) => state.actualizarCita)
+
+    const [ServicioByCita, setServicioByCita] = useState<Servicio[]>([])
+    const seriviciosByCita = useServiciosStore((state)=>state.getServiciosByCita)
+
+    useEffect(() => {
+        setServicioByCita(seriviciosByCita(selectedCita?.servicios!!)) 
+    }, [])
+    
 
     const mutation = useMutation<CitaInput, Error, CitaInput>({
         mutationFn: (finalData) => createCita(finalData)
@@ -58,11 +65,11 @@ const AgendarDialog = ({ dialogRef }: AgendarDialogProps) => {
             fecha: values.fecha
         }
 
-        if(citasMethod === CitasMethod.CREAR){
+        if (citasMethod === CitasMethod.CREAR) {
             await mutation.mutateAsync(FinalData);
             agregarCita({
                 nombre: values.nombre + " " + values.apellido,
-                servicios: values.servicios,
+                servicios: values.servicios.map((servicio:Servicio)=>servicio.id),
                 hora: values.hora + " " + hora,
                 total: Number(values.total),
                 fecha: values.fecha
@@ -72,10 +79,10 @@ const AgendarDialog = ({ dialogRef }: AgendarDialogProps) => {
                 description: "Cita agendada con éxito!"
             });
         }
-        if(citasMethod === CitasMethod.REPROGRAMAR){
+        if (citasMethod === CitasMethod.REPROGRAMAR) {
             await mutationUpdate.mutateAsync({ id: selectedCita?.id || '', data: FinalData });
             actualizarCita({
-                id:selectedCita?.id ,
+                id: selectedCita?.id,
                 ...FinalData
             })
             seleccionarCita(null)
@@ -84,10 +91,10 @@ const AgendarDialog = ({ dialogRef }: AgendarDialogProps) => {
                 description: "Cita reprogramada con éxito!"
             });
         }
-        if(citasMethod === CitasMethod.ACTUALIZAR){
+        if (citasMethod === CitasMethod.ACTUALIZAR) {
             await mutationUpdate.mutateAsync({ id: selectedCita?.id || '', data: FinalData });
             actualizarCita({
-                id:selectedCita?.id ,
+                id: selectedCita?.id,
                 ...FinalData
             })
             seleccionarCita(null)
@@ -97,7 +104,7 @@ const AgendarDialog = ({ dialogRef }: AgendarDialogProps) => {
                 description: "Cita editada con éxito!"
             });
         }
-        
+
         setLoading(false);
         cambiarCitasMethod(CitasMethod.CREAR);
         dialogRef.current?.click();
@@ -112,7 +119,7 @@ const AgendarDialog = ({ dialogRef }: AgendarDialogProps) => {
                     validationSchema={validationSchema}
                     onSubmit={handleSubmit}
                 >
-                    {({ values, setFieldValue,errors }) => (
+                    {({ values, setFieldValue, errors }) => (
                         <Form className='flex w-full'>
                             <div className="w-1/2  flex justify-center items-center">
                                 <Calendar
@@ -159,13 +166,9 @@ const AgendarDialog = ({ dialogRef }: AgendarDialogProps) => {
 
                                 <div className="w-[73%] ">
                                     <SelectCustom
-                                        onChange={async (_, value) => {
-                                            await setFieldValue('servicios', value);
-                                            const total = calcularTotalServicios(value);
-                                            await setFieldValue('total', `$ ${total}`);
-                                        }}
-                                        serviciosExistentes={values.servicios}
-                                        value={values.servicios}
+                                        setFieldValue={setFieldValue}
+                                        serviciosExistentes={ServicioByCita}
+                                        value={ServicioByCita}
                                     />
 
                                 </div>
@@ -206,9 +209,9 @@ const AgendarDialog = ({ dialogRef }: AgendarDialogProps) => {
                                 </div>
 
                                 <div className="w-[73%] flex justify-end">
-                                    <button 
-                                        type='submit' 
-                                        className="py-2 px-8 rounded-lg text-white font-light bg-[#0077FF]" 
+                                    <button
+                                        type='submit'
+                                        className="py-2 px-8 rounded-lg text-white font-light bg-[#0077FF]"
                                         disabled={loading}
                                     >
                                         {loading ? 'Cargando...' : 'Agendar'}

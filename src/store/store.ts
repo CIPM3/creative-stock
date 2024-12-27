@@ -1,13 +1,14 @@
 import { create } from 'zustand'
-import { Cita, CitasMethod, StoreState } from '../types'
+import { Cita, CitasMethod, Servicio, StoreCitas, StorePrecios, StoreProducts, StoreServicio, StoreStock } from '../types'
 import { getCitas } from '@/api/citas/citas.get'
 import { getProducts } from '@/api/productos/producto.get'
 import { FakeDataProduct } from '@/data'
 import { getStock } from '@/api/stock/stock.get'
 import { getPrecios } from '@/api/precios/precios.get'
+import { getServicios } from '@/api/servicios/servicios.get'
 
-export const useStore = create<StoreState>((set) => ({
-  //CITAS
+
+export const useCitasStore = create<StoreCitas>((set) => ({
   citas: [],
   selectedCita: null,
   citasMethod: CitasMethod.CREAR,
@@ -29,12 +30,13 @@ export const useStore = create<StoreState>((set) => ({
       cita.id === actualizadaCita.id ? actualizadaCita : cita
     );
     return { citas: nuevasCitas, selectedCita: null };
-  }),
+  })
+}))
 
-  //PRODUCTO
+export const useProductosStore = create<StoreProducts>((set) => ({
   productos: [],
   selectedFilter: null,
-  selectedProduct:null,
+  selectedProduct: null,
   seleccionarFiltro: (categoria: string | null) => set({ selectedFilter: categoria }),
   searchInput: null,
   searchInputProduct: (search: string | null) => set({ searchInput: search }),
@@ -42,7 +44,7 @@ export const useStore = create<StoreState>((set) => ({
     set((state) => ({ productos: [...state.productos, nuevoProducto] }));
   },
   // Agregar las funciones faltantes
-  cargarProduct: async () => { 
+  cargarProduct: async () => {
     // Verificar el entorno
     if (process.env.NODE_ENV === 'production') {
       // Lógica para producción
@@ -51,7 +53,7 @@ export const useStore = create<StoreState>((set) => ({
     } else {// Aquí puedes definir datos de prueba o lógica alternativa
       const data = await getProducts();
       const fakeData = FakeDataProduct
-      set({ productos: [...data,...fakeData] });
+      set({ productos: [...data, ...fakeData] });
     }
   }, // Implementar lógica más tarde
   eliminarProduct: (id) => set((state) => {
@@ -70,19 +72,54 @@ export const useStore = create<StoreState>((set) => ({
       return { ...state, selectedProduct: producto || null };
     });
   },
+}))
 
-  //Stock
-  stock:[],
-  cargarStock: async () => { 
+export const useStockStore = create<StoreStock>((set) => ({
+  stock: [],
+  cargarStock: async () => {
     const data = await getStock()
-    set({stock: data})
+    set({ stock: data })
   },
+}))
 
-  //Precios
-  precios:[],
+export const usePreciosStore = create<StorePrecios>((set) => ({
+  precios: [],
   cargarPrecios: async () => {
     const data = await getPrecios()
-    set({precios: data})
+    set({ precios: data })
   }
-  
+}))
+
+export const useServiciosStore = create<StoreServicio>((set,get) => ({
+  servicio: [],
+  cargarServicios: async () => {
+    if (process.env.NODE_ENV === 'production') {
+      // Lógica para producción
+      const data = await getServicios();
+      set({ servicio: [...data] });
+    } else {// Aquí puedes definir datos de prueba o lógica alternativa
+      const data = await getServicios();
+      //const fakeData = FakeServiciosData
+      set({ servicio: [...data] });
+    }
+  },
+  agregarServicio: async (nuevoServicio: Servicio) => {
+    set((state) => ({ servicio: [...state.servicio, nuevoServicio] }));
+  },
+  selectedFilter: null,
+  seleccionarFiltro: (categoria: string | null) => set({ selectedFilter: categoria }),
+  getServiciosByCita: (serviciosId: string[]): Servicio[] => {
+    const servicios = get().servicio as Servicio[];
+
+    // Verificar que 'state' y 'state.servicio' no sean undefined
+    if (!Array.isArray(servicios)) {
+      console.error('El estado de servicios no está definido o no es un array.');
+      return [];
+    }
+
+    const serviciosIdSet = new Set(serviciosId);
+    const serviciosEncontrados = servicios.filter(servicio => serviciosIdSet.has(servicio?.id!!));
+
+    return serviciosEncontrados;
+  },
 }))

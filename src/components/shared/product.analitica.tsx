@@ -1,5 +1,8 @@
 import { useState } from "react";
 import ProductChart from "../charts/product.chart"
+import { useStockStore,usePreciosStore } from "@/store/store";
+import { useParams } from "react-router-dom";
+import { formatDate } from "@/funcs";
 
 
 const filterChartData = (data: { fecha: string; entrada: number; salida: number; }[], timeline: 'semana' | 'mes') => {
@@ -73,34 +76,62 @@ const filterChartData = (data: { fecha: string; entrada: number; salida: number;
     return data; // Retornar data ya ordenada
 }
 
-const ProductAnalitica = () => {
+const ProductAnalitica = ({ tipo }: { tipo: 'dia' | 'completo' }) => {
     const [chartType] = useState<'salida' | 'entrada' | 'ambos'>('ambos');
     const [timelineType] = useState<'semana' | 'mes'>('semana');
+    const {id} = useParams()
 
     const [timeline, setTimeline] = useState(timelineType);
     const [chart, setChart] = useState(chartType);
 
-    const chartDataFake = [
-        { fecha: "01/12/24 10:00 AM", entrada: 150, salida: 70 },
-        { fecha: "05/12/24 11:30 AM", entrada: 200, salida: 90 },
-        { fecha: "10/12/24 02:15 PM", entrada: 180, salida: 60 },
-        { fecha: "15/12/24 09:45 AM", entrada: 220, salida: 110 },
-        { fecha: "18/12/24 01:00 PM", entrada: 170, salida: 80 },
-        { fecha: "17/12/24 01:00 PM", entrada: 170, salida: 80 },
-        { fecha: "20/12/24 01:00 PM", entrada: 170, salida: 80 },
-        { fecha: "25/12/24 03:30 PM", entrada: 250, salida: 130 },
-        { fecha: "30/12/24 04:00 PM", entrada: 190, salida: 100 },
-    ]
+    const stock = useStockStore((state) => state.stock)
+    const precios = usePreciosStore((state)=> state.precios)
 
-    const filteredChartData = filterChartData(chartDataFake, timeline) || [];
+    const preciosOfProduct = precios.find((precio) => precio.productId === id)
 
+    // Agrupar y transformar los datos del stock al formato deseado
+    const groupedStockData = stock.reduce((acc: Record<string, { fecha: string; entrada: number; salida: number }>, item) => {
+        const dateKey = item.fecha.split(" ")[0]; // Obtener solo la parte de la fecha (sin la hora)
+        
+        if (!acc[dateKey]) {
+            acc[dateKey] = { fecha: item.fecha, entrada: 0, salida: 0 };
+        }
+
+        const precioCompra = preciosOfProduct?.precioCompra ?? 0; // Asegurar que no sea undefined
+        const precioVenta = preciosOfProduct?.precioVenta ?? 0; // Asegurar que no sea undefined
+
+        acc[dateKey].entrada += item.tipo === "venta" ? item.cantidad * precioCompra : 0;
+        acc[dateKey].salida += item.tipo === "compra" ? item.cantidad * precioVenta : 0;
+
+        return acc;
+    }, {} as Record<string, { fecha: string; entrada: number; salida: number }>);
+
+    // Convertir el objeto agrupado en un arreglo
+    const transformedStockData = Object.values(groupedStockData);
+
+    // Filtrar los datos según el tipo
+    const filteredData = tipo === 'dia'
+        ? transformedStockData.filter(item => {
+            const today = new Date();
+            return item.fecha.split(" ")[0] === formatDate(today).split(" ")[0];
+        })
+        : transformedStockData;
+
+    const filteredChartData = filterChartData(filteredData, timeline) || [];
 
     return (
         <div className="w-full grid grid-cols-2 gap-x-5">
             <div className="col-start-1 col-end-2 mt-5">
-                <ProductChart chart={chart} filteredChartData={filteredChartData} setChart={setChart} setTimeline={setTimeline} timeline={timeline} />
+                <ProductChart 
+                chart={chart} 
+                filteredChartData={filteredChartData} 
+                setChart={setChart} 
+                setTimeline={setTimeline} 
+                timeline={timeline} 
+                tipo={tipo}
+                />
             </div>
-            <div className="col-start-2 col-end-3 border-[1px] border-[#707070] rounded-lg mt-20">
+            <div className={`col-start-2 col-end-3 border-[1px] border-[#707070] rounded-lg ${tipo === "completo" ? 'mt-20' : 'mt-8'} `}>
 
                 {
                     filteredChartData.map((data, index) => {

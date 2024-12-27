@@ -8,7 +8,7 @@ import {
 import { Cita, CitasMethod } from "@/types"
 import { Calendario } from "@/assets/svg";
 import { RefObject } from "react";
-import { useStore } from "@/store/store";
+import { useCitasStore } from "@/store/store";
 import EliminarCitaDialog from "../dialog/eliminarCita.dialog";
 
 interface Props {
@@ -18,8 +18,8 @@ interface Props {
 
 const CrudTooltipDropdown = ({ cita, dialogRef }: Props) => {
 
-    const seleccionarCita = useStore((state) => state.seleccionarCita)
-    const cambiarCitasMethod = useStore((state) => state.cambiarCitasMethod)
+    const seleccionarCita = useCitasStore((state) => state.seleccionarCita)
+    const cambiarCitasMethod = useCitasStore((state) => state.cambiarCitasMethod)
 
     return (
         <DropdownMenu>

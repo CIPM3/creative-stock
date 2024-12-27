@@ -8,11 +8,17 @@ import SearchInput from "@/components/inputs/search.input"
 import FiltroDropdown from "@/components/dropdown/filtro.dropdown"
 import { Cita } from "@/types"
 import AgendaItem from "@/components/cards/agenda.card.mes"
-import { useStore } from "@/store/store"
+import { useCitasStore, useServiciosStore } from "@/store/store"
 
 const Agenda = () => {
-  const cargarCitas = useStore((state) => state.cargarCitas)
-  const citas = useStore((state) => state.citas)
+  const cargarCitas = useCitasStore((state) => state.cargarCitas)
+  const citas = useCitasStore((state) => state.citas)
+
+  const cargarServicios = useServiciosStore((state)=> state.cargarServicios)
+  
+  useEffect(() => {
+    cargarServicios()
+  }, [])
 
   const [searchClient, setSearchClient] = useState("")
   const [timeline, setTimeline] = useState("semana")
@@ -149,7 +155,7 @@ const AgendaMensual = ({ filtrarYOrdenarCitas }: ASProps) => {
             {semana.map((dia, diaIndex) => (
               <div key={diaIndex} className={`w-full h-fit min-h-44 rounded-lg flex flex-col ${dia && 'border bg-white'} my-3`}>
                 {dia !== null && (
-                  <AgendaItem cancelarRef={cancelarRef} dialogRef={dialogRef} dia={dia.toString()} diaIndex={diaIndex} filtrarYOrdenarCitas={filtrarYOrdenarCitas} primerDiaDelMes={primerDiaDelMes} />
+                  <AgendaItem key={index} cancelarRef={cancelarRef} dialogRef={dialogRef} dia={dia.toString()} diaIndex={diaIndex} filtrarYOrdenarCitas={filtrarYOrdenarCitas} primerDiaDelMes={primerDiaDelMes} />
                 )}
               </div>
             ))}

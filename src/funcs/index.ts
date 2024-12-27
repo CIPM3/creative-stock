@@ -1,4 +1,4 @@
-import { Product, Stock, StockSummary } from "@/types";
+import { Product, Servicio, Stock, StockSummary } from "@/types";
 import { corte,labial,lavado,unas } from "../assets/icons";
 
 const obtenerDiasDeLaSemana = () => {
@@ -15,6 +15,7 @@ const obtenerDiasDeLaSemana = () => {
 };
 
 const obtenerIconoServicio = (iconName:string) => {
+  
   if(iconName === "corte"){
     return corte
   }
@@ -43,28 +44,9 @@ const obtenerNombreServicio = (iconName:string) => {
     return "Uñas"
   }
 }
-
-const obtenerPrecioServicio = (iconName: string) => {
-  if (iconName === "corte") {
-    return 20; // Precio para corte de cabello
-  }
-  if (iconName === "labial") {
-    return 30; // Precio para maquillaje
-  }
-  if (iconName === "masaje") {
-    return 50; // Precio para masaje
-  }
-  if (iconName === "unas") {
-    return 25; // Precio para uñas
-  }
-  return 0; // Precio por defecto si no coincide
-}
-
-const calcularTotalServicios = (servicios: string[]) => {
-  return servicios.reduce((total, servicio) => {
-    const precio = obtenerPrecioServicio(servicio);
-    return total + precio;
-  }, 0);
+ 
+const calcularTotalServicios = (servicios: Servicio[]): number => {
+  return servicios.reduce((suma, servicio) => suma + servicio.total, 0);
 }
 
 const getCatColors = (categorie:string) => {
@@ -117,9 +99,9 @@ const handleStock = (data: Stock[], product: Product): StockSummary[] => {
           const summary = stocksByDate.get(date)!;
 
           // Sumar la cantidad según el tipo de transacción
-          if (stock.tipo === 'entrada') {
+          if (stock.tipo === 'compra') {
               summary.entradaDeStock += stock.cantidad;
-          } else if (stock.tipo === 'salida') {
+          } else if (stock.tipo === 'venta') {
               summary.salidaDeStock += stock.cantidad;
           }
       }

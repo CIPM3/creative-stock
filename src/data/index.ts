@@ -317,8 +317,60 @@ const RandomColors = [
 
 ]
 
+const FakeServiciosData = [
+  {
+      name: 'manicura basica',
+      category: 'unas',
+      agendados: 50,
+      total: 1500
+  },
+  {
+      name: 'peluqueria basica',
+      category: 'corte',
+      agendados: 10,
+      total: 2500
+  },
+  {
+      name: 'maquillaje basico',
+      category: 'labial',
+      agendados: 15,
+      total: 500
+  },
+  {
+      name: 'masaje basico',
+      category: 'masaje',
+      agendados: 55,
+      total: 5500
+  },
+  {
+      name: 'manicura premium',
+      category: 'unas',
+      agendados: 50,
+      total: 2500
+  },
+  {
+      name: 'peluqueria premium',
+      category: 'corte',
+      agendados: 10,
+      total: 4500
+  },
+  {
+      name: 'maquillaje premium',
+      category: 'labial',
+      agendados: 15,
+      total: 1000
+  },
+  {
+      name: 'masaje premium',
+      category: 'masaje',
+      agendados: 55,
+      total: 2500
+  },
+]
+
 export {
     FakeData,
     RandomColors,
-    FakeDataProduct
+    FakeDataProduct,
+    FakeServiciosData
 }

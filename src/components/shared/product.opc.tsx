@@ -14,21 +14,31 @@ const ProductOpc = ({ type, product }: Props) => {
                 <ProductTable
                     product={product}
                     firstText="Stock Añadido"
-                    secondText="Stock Vendido" 
+                    secondText="Stock Vendido"
                     type={type}
-                    />)}
+                />)}
             {
                 type === "analitica" && (
-                    <ProductAnalitica/>
+                    <ProductAnalitica 
+                        tipo="completo"
+                    />
                 )
             }
             {type === "salida" && (
                 <ProductTable
                     product={product}
                     firstText="Reestock"
-                    secondText="Salida" 
+                    secondText="Salida"
                     type={type}
-                    />)}
+                />)}
+
+            {
+                type === "ventas" && (
+                    <ProductAnalitica 
+                        tipo="dia"
+                    />
+                )
+            }
         </div>
     )
 }

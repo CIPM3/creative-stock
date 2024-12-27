@@ -24,7 +24,7 @@ export const addStockTransaction = async ({ productId, cantidadAAgregar, cantida
         await addDoc(collection(db, 'stock'), {
             productoId: productId,
             cantidad: cantidadAAgregar,
-            tipo: 'entrada', // Puedes ajustar el tipo según sea necesario
+            tipo: 'compra', // Puedes ajustar el tipo según sea necesario
             fecha: fechaFormateada // Fecha en formato 'dd/mm/yy hh:mm AM/PM'
         });
 

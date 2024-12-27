@@ -4,8 +4,8 @@ export enum CitasMethod {
     ACTUALIZAR = 'actualizar'
 }
 
-export type StoreState = {
-    //CITAS
+//STORE TYPES
+export type StoreCitas = {
     citas: Cita[];
     cargarCitas: () => Promise<void>;
     agregarCita: (nuevaCita: Cita) => void;
@@ -15,7 +15,9 @@ export type StoreState = {
     actualizarCita: (actualizadaCita: Cita) => void;
     citasMethod: CitasMethod;
     cambiarCitasMethod: (citaMethod: CitasMethod) => void
-    //PRODUCTOS
+}
+
+export type StoreProducts = {
     productos: Product[];
     cargarProduct: () => Promise<void>;
     selectedFilter: string | null;
@@ -27,14 +29,29 @@ export type StoreState = {
     agregarProduct: (nuevoProducto: Product) => void;
     eliminarProduct: (id: string) => void;
     actualizarProduct: (prodcutoActualizado: Product) => void;
-    //STOCK
+}
+
+export type StoreStock = {
     stock: Stock[],
     cargarStock: () => Promise<void>;
-    //Precios
+}
+
+export type StorePrecios = {
     precios: Precio[],
     cargarPrecios: () => Promise<void>;
-};
+}
 
+export type StoreServicio = {
+    servicio: Servicio[],
+    cargarServicios: () => Promise<void>;
+    selectedFilter: string | null;
+    agregarServicio: (nuevoProducto: Servicio) => void;
+    seleccionarFiltro: (categoria: string | null) => void;
+    getServiciosByCita: (serviciosId: string[]) => Servicio[];
+}
+
+
+//NORMAL TYPES
 export type Product = {
     id: string;
     name: string;
@@ -83,4 +100,13 @@ export interface StockSummary {
     entradaDeStock: number;
     salidaDeStock: number;
     productID: string;
+    tipo?:string
+}
+
+export type Servicio = {
+    id?: string;
+    name: string;
+    category: string;
+    agendados: number;
+    total: number;
 }

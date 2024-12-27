@@ -20,7 +20,7 @@ import WithLabel from "../inputs/withLabel.input"
 import { useRef, useState } from "react"
 import { getCatColors } from "@/funcs"
 import { GIVProducts, VSProducts } from "@/libs/formik.validation";
-import { useStore } from "@/store/store";
+import { useProductosStore } from "@/store/store";
 import { useMutation } from "@tanstack/react-query";
 import { updateProduct } from "@/api/productos/productos.update";
 import { deleteProduct } from "@/api/productos/producto.delete";
@@ -45,8 +45,8 @@ const EditDeleteDialog = ({ type, product }: Props) => {
     const [loading, setLoading] = useState(false);
     const dialogRef = useRef<HTMLButtonElement>(null);
 
-    const editarProducto = useStore((state) => state.actualizarProduct)
-    const eliminarProducto = useStore((state) => state.eliminarProduct)
+    const editarProducto = useProductosStore((state) => state.actualizarProduct)
+    const eliminarProducto = useProductosStore((state) => state.eliminarProduct)
 
     const mutationUpdate = useMutation<Product, Error, Product>({
         mutationFn: (finalData) => updateProduct(product.id,finalData)

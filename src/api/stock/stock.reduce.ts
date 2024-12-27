@@ -13,7 +13,7 @@ export const reduceStockTransaction = async (productId: string, cantidad: number
     await addDoc(collection(db, 'stock'), {
         productoId: productId,
         cantidad: cantidad,
-        tipo: 'salida',
+        tipo: 'venta',
         fecha: new Date()
     });
 }

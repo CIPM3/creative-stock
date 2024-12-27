@@ -1,5 +1,5 @@
 import { getCatColors, handleStock } from "@/funcs"
-import { useStore } from "@/store/store"
+import { useStockStore,usePreciosStore } from "@/store/store"
 import { Product } from "@/types"
 import { useEffect, useState } from "react"
 
@@ -12,8 +12,8 @@ interface Props {
 
 const ProductTable = ({ product, firstText, secondText,type }: Props) => {
 
-    const stocks = useStore((state) => state.stock)
-    const cargarStock = useStore((state) => state.cargarStock)
+    const stocks = useStockStore((state) => state.stock)
+    const cargarStock = useStockStore((state) => state.cargarStock)
     const [isLoading, setisLoading] = useState(false)
 
 
@@ -84,15 +84,15 @@ interface PropsTable {
 }
 
 const TableCellProduct = ({ producto, type }: PropsTable) => {
-    const precios = useStore((state) => state.precios)
-    const cargarPrecios = useStore((state) => state.cargarPrecios)
+    const precios = usePreciosStore((state) => state.precios)
+    const cargarPrecios = usePreciosStore((state) => state.cargarPrecios)
 
 
     useEffect(() => {
         cargarPrecios()
     }, [])
 
-    const precioProduct = precios.find((price)=> price.productId === producto.id)
+    const precioProduct = precios.find((price) => price.productId === producto.id)
 
 
     return (
@@ -108,22 +108,21 @@ const TableCellProduct = ({ producto, type }: PropsTable) => {
                 </span>
             </div>
             <div onClick={() => { }} className={`col-start-4 text-center cursor-pointer text-lg col-end-5  ${type === "stock" ? "text-[#19AD0F]" : "text-[#0077FF]"}  font-semibold`}>
-                +{producto.stockEntrada}
+                +{producto.stockEntrada ?? 0}
             </div>
             <div onClick={() => { }} className="col-start-5 text-center cursor-pointer text-lg col-end-6 text-[#DD1313] font-semibold">
                 {
-                    type == "stock" && <>-{producto.stockSalida}</>
+                    type == "stock" && <>-{producto.stockSalida ?? 0}</>
                 }
                 {
-                    type == "salida" && <>${producto.stockSalida * precioProduct?.precioCompra!!}</>
+                    type == "salida" && <>${producto.stockEntrada * precioProduct?.precioVenta!!}</>
                 }
-                {/* -{type !== "stock" && '$'}{producto.stockSalida} */}
             </div>
             <div onClick={() => { }} className="col-start-6 text-end cursor-pointer text-lg col-end-8 text-[#707070] font-light">
-                {producto.fecha?.split(" ")[0]}
+                {producto.fecha?.split(" ")[0] ?? ''}
             </div>
             <div onClick={() => { }} className="col-start-8 text-center cursor-pointer text-lg col-end-9 text-[#707070] font-semibold">
-                {producto.fecha?.split(" ")[1]} {producto.fecha?.split(" ")[2]}
+                {producto.fecha?.split(" ")[1] ?? ''} {producto.fecha?.split(" ")[2] ?? ''}
             </div>
         </div>
     )

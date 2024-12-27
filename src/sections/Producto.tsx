@@ -1,24 +1,25 @@
 import { Entradas, Filter, StockSvg, VentasSvg } from "@/assets/svg"
 import EditarProductoTable from "@/components/dialog/editarProduct.dropdown"
 import AgregarStock from "@/components/dropdown/agregarStock.dialog"
-import { formatDate, getCatColors, handleStock } from "@/funcs"
-import { useStore } from "@/store/store"
+import { formatDate, getCatColors } from "@/funcs"
+import { useProductosStore,usePreciosStore,useStockStore } from "@/store/store"
 import { useEffect, useState } from 'react';
 import { useParams } from "react-router-dom"
 
 import NavButton from '@/components/ui/navButton';
 import ProductOpc from '../components/shared/product.opc';
+import { Stock } from "@/types"
 
 
 const Producto = () => {
 
     const { id } = useParams()
-    const selectProduct = useStore((state) => state.selectProducto)
-    const selectedProduct = useStore((state) => state.selectedProduct)
+    const selectProduct = useProductosStore((state) => state.selectProducto)
+    const selectedProduct = useProductosStore((state) => state.selectedProduct)
     const date = formatDate(new Date())
 
-    const precios = useStore((state)=>state.precios)
-    const stock = useStore((state)=>state.stock)
+    const precios = usePreciosStore((state) => state.precios)
+    const stock = useStockStore((state) => state.stock)
 
     const [selectedField, setselectedField] = useState(0)
 
@@ -26,10 +27,44 @@ const Producto = () => {
         selectProduct(id!!)
     }, [id])
 
-    const stocksByProduct = handleStock(stock,selectedProduct!!)
-    const precioOfProduct = precios.find((price)=> price.productId === selectedProduct?.id!!)
-    const movementsOfDay = stocksByProduct.filter((day)=> day.date === date.split(' ')[0])[0]
 
+    const handleStockProduct = (transacciones: Stock[], date: Date, productId: string) => {
+        const hoy = date;
+        const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+    
+        let ventasDelDia = 0;
+        let ventasDelMes = 0;
+        let salidasDelDia = 0;
+        let salidasDelMes = 0;
+    
+        transacciones
+            .filter(transaccion => transaccion.productoId === productId)
+            .forEach(transaccion => {
+                const fechaTransaccion = transaccion.fecha.split(" ")[0];
+                const [dia, mes, año] = fechaTransaccion.split("/").map(Number);
+                const fechaTransaccionDate = new Date(año + 2000, mes - 1, dia); // Ajuste para el año
+        
+                const esHoy = fechaTransaccionDate.toDateString() === hoy.toDateString();
+                const esEsteMes = fechaTransaccionDate >= inicioMes;
+        
+                if (transaccion.tipo === "venta") {
+                    if (esHoy) ventasDelDia += transaccion.cantidad;
+                    if (esEsteMes) ventasDelMes += transaccion.cantidad;
+                } else if (transaccion.tipo === "compra") {
+                    if (esHoy) salidasDelDia += transaccion.cantidad;
+                    if (esEsteMes) salidasDelMes += transaccion.cantidad;
+                }
+            });
+    
+        return { ventasDelDia, ventasDelMes, salidasDelDia, salidasDelMes };
+    }
+
+    const preciosOfProduct = precios.find((precio) => precio.productId === id) || { precioVenta: 0, precioCompra: 0 };
+    
+    const estadisticas = handleStockProduct(stock, new Date(), id!!);
+
+    const ventasDelDiaTotal = estadisticas.ventasDelDia * (preciosOfProduct?.precioVenta || 0);
+    const salidasDelMesTotal = estadisticas.salidasDelMes * (preciosOfProduct?.precioCompra || 0);
 
     return (
         <div className="w-full min-h-[90dvh]">
@@ -82,8 +117,8 @@ const Producto = () => {
                             <VentasSvg className="size-6 fill-[#3C3C3C]" />
                             Ventas de hoy
                         </div>
-                        <div className="flex  items-center text-3xl gap-x-2 font-semibold text-[#3C3C3C]">
-                            <span className="text-[#19AD0F]">${movementsOfDay?.salidaDeStock!! * precioOfProduct?.precioVenta!!}</span>
+                        <div className="flex items-center text-3xl gap-x-2 font-semibold text-[#3C3C3C]">
+                            <span className="text-[#19AD0F]">${ventasDelDiaTotal}</span>
                         </div>
                     </div>
                     <div className="w-full pl-10 col-start-3 col-end-5 flex items-start justify-between">
@@ -92,8 +127,8 @@ const Producto = () => {
                                 <Entradas className="fill-[#3C3C3C] size-6" />
                                 Salida
                             </div>
-                            <div className="flex  items-center text-3xl gap-x-2 font-semibold text-[#3C3C3C]">
-                                <span className="text-[#DD1313]">${movementsOfDay?.entradaDeStock!! * precioOfProduct?.precioCompra!! }</span>
+                            <div className="flex items-center text-3xl gap-x-2 font-semibold text-[#3C3C3C]">
+                                <span className="text-[#DD1313]">${salidasDelMesTotal}</span>
                             </div>
                         </div>
                         <div className="w-full flex flex-col h-full items-end justify-start">
@@ -147,7 +182,7 @@ const Producto = () => {
                 </div>
 
                 {/* FIELDS */}
-                <ProductOpc type={['stock', 'ventas', 'salida', 'analitica'][selectedField] as 'stock' | 'ventas' | 'salida' | 'analitica'} product={selectedProduct!!}/>
+                <ProductOpc type={['stock', 'ventas', 'salida', 'analitica'][selectedField] as 'stock' | 'ventas' | 'salida' | 'analitica'} product={selectedProduct!!} />
             </div>
         </div>
     )

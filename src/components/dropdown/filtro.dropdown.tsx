@@ -38,8 +38,8 @@ const FiltroDropdown = ({ array, setselectedFilter, selectedFilter }: Props) => 
 
             <DropdownMenuContent className="w-[220px] relative">
                 {
-                    array.map((data:any) => (
-                        <DropdownMenuItem onClick={() => setselectedFilter(data)} >
+                    array.map((data:any,index) => (
+                        <DropdownMenuItem key={index} onClick={() => setselectedFilter(data)} >
                             <div className="w-full flex py-2 px-4 cursor-pointer items-center gap-2">
                                 <img className="size-5" src={obtenerIconoServicio(data)} alt={data} />
                                 <p className="font-light text-[#707070] first-letter:uppercase">{obtenerNombreServicio(data)}</p>

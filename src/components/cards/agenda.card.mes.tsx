@@ -14,7 +14,7 @@ interface Props{
     cancelarRef:RefObject<HTMLButtonElement>
 }
 
-const AgendaItem = ({primerDiaDelMes,dia,diaIndex,filtrarYOrdenarCitas,dialogRef,cancelarRef}:Props) => {
+const AgendaItem = ({primerDiaDelMes,dia,diaIndex,filtrarYOrdenarCitas,dialogRef}:Props) => {
     const nombresDias = ["dom", "lun", "mar", "mié", "jue", "vie", "sab"];
 
     //obtiene un array con los datos de las citas
@@ -33,7 +33,7 @@ const AgendaItem = ({primerDiaDelMes,dia,diaIndex,filtrarYOrdenarCitas,dialogRef
                         {filtro.slice(0, 3).map((cita) => (
                             <div className={`w-full ${RandomColors[Math.floor(Math.random() * RandomColors.length)]} flex items-center justify-between font-semibold py-1 px-2 text-white  rounded-lg`}>
                                 <AgendaInfo cita={cita}/>
-                                <CrudTooltipDropdown dialogRef={dialogRef} cancelarRef={cancelarRef} cita={cita}/>
+                                <CrudTooltipDropdown dialogRef={dialogRef}  cita={cita}/>
                             </div>
                         ))}
 
@@ -45,7 +45,7 @@ const AgendaItem = ({primerDiaDelMes,dia,diaIndex,filtrarYOrdenarCitas,dialogRef
                     filtro.map((cita) => (
                         <div className={`w-full ${RandomColors[Math.floor(Math.random() * RandomColors.length)]} flex items-center justify-between font-semibold py-1 px-2 text-white  rounded-lg`}>
                             <AgendaInfo cita={cita}/>
-                            <CrudTooltipDropdown cancelarRef={cancelarRef} dialogRef={dialogRef} cita={cita}/>
+                            <CrudTooltipDropdown  dialogRef={dialogRef} cita={cita}/>
                         </div>
                     ))
                 )}

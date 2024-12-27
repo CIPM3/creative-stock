@@ -19,7 +19,7 @@ import { useRef, useState } from "react"
 import { getCatColors } from "@/funcs"
 import { Arrow } from "@/assets/svg"
 import { GIVProducts, VSProducts } from "@/libs/formik.validation";
-import { useStore } from "@/store/store";
+import { useProductosStore } from "@/store/store";
 import { useMutation } from "@tanstack/react-query";
 import { Product } from "@/types";
 import { createProduct } from "@/api/productos/producto.create";
@@ -39,7 +39,7 @@ const AgregarProductDialog = () => {
   const [loading, setLoading] = useState(false);
   const dialogRef = useRef<HTMLButtonElement>(null);
 
-  const agregarProducto = useStore((state) => state.agregarProduct)
+  const agregarProducto = useProductosStore((state) => state.agregarProduct)
 
   const mutation = useMutation<Product, Error, Product>({
     mutationFn: (finalData) => createProduct(finalData)

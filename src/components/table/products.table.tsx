@@ -2,7 +2,7 @@ import { CategoriaSvg, Entradas, StockSvg, VentasSvg } from "@/assets/svg"
 import TableCell from "./products.cell"
 import FiltroProductsDropdown from "../dropdown/filtro.products.dropdown"
 import AgregarProductDialog from "../dialog/agregarProdcut.dialog"
-import { useStore } from "@/store/store"
+import { useProductosStore } from "@/store/store"
 import { useEffect, useState } from "react"
 import { Product } from "@/types"
 import { ArrowLeft, ArrowRight } from "lucide-react"
@@ -37,10 +37,10 @@ const TableCategories = [
 
 export function ProductsTable() {
 
-    const SelectedFilter = useStore((state) => state.selectedFilter)
-    const Products = useStore((state) => state.productos)
-    const CargarProducts = useStore((state) => state.cargarProduct)
-    const searchProduct = useStore((state) => state.searchInput)
+    const SelectedFilter = useProductosStore((state) => state.selectedFilter)
+    const Products = useProductosStore((state) => state.productos)
+    const CargarProducts = useProductosStore((state) => state.cargarProduct)
+    const searchProduct = useProductosStore((state) => state.searchInput)
 
     useEffect(() => {
       CargarProducts()

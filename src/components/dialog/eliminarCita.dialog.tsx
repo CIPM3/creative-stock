@@ -11,7 +11,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
-import { useStore } from "@/store/store";
+import { useCitasStore } from "@/store/store";
 import { Cita } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 import { useRef, useState } from "react";
@@ -25,7 +25,7 @@ const EliminarCitaDialog = ({cita}:Props) => {
     const dialogRef = useRef<HTMLButtonElement>(null);
     const [loading, setLoading] = useState(false);
 
-    const eliminarCita = useStore((state) => state.eliminarCita)
+    const eliminarCita = useCitasStore((state) => state.eliminarCita)
 
 
     const mutationDelete = useMutation({

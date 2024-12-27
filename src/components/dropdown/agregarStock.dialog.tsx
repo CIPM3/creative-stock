@@ -13,7 +13,7 @@ import { Formik, Form } from 'formik';
 import { GIVProducts, VSProducts } from "@/libs/formik.validation";
 import { useRef, useState } from "react";
 import { Product } from "@/types";
-import { useStore } from "@/store/store";
+import { useProductosStore } from "@/store/store";
 import { addStockTransaction } from "@/api/stock/stock.add";
 
 interface Props {
@@ -26,7 +26,7 @@ const AgregarStock = ({product}:Props) => {
     const dialogRef = useRef<HTMLButtonElement>(null);
     const [loading, setloading] = useState(false)
 
-    const actualizarProduct = useStore((state)=>state.actualizarProduct)
+    const actualizarProduct = useProductosStore((state)=>state.actualizarProduct)
 
     const handleSubmit = async (values: any) => {
         setloading(true)

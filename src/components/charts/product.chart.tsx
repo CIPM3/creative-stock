@@ -31,25 +31,31 @@ interface Props {
     chart: 'salida' | 'entrada' | 'ambos',
     setChart: (chart: 'salida' | 'entrada' | 'ambos') => void,
     filteredChartData: any[], // Cambia 'any' por el tipo adecuado si lo conoces
+    tipo: 'dia' | 'completo'
 }
 
-const ProductChart = ({ timeline, setTimeline, chart, setChart, filteredChartData }: Props) => {
+const ProductChart = ({ timeline, setTimeline, chart, setChart, filteredChartData, tipo }: Props) => {
     return (
         <div className="w-full ">
-            <div className="w-full flex justify-end gap-x-1">
-                <button onClick={() => setTimeline("semana")} className={`
+            {
+                tipo === "completo" && (
+                    <div className="w-full flex justify-end gap-x-1">
+                        <button onClick={() => setTimeline("semana")} className={`
                     first-letter:uppercase px-8 py-3 border-[1px] 
                     ${timeline === "semana"
-                        ? "border-[#336EB1] text-[#336EB1] bg-[#D8E5F3]"
-                        : "border-[#707070] text-[#707070] bg-[#EAEAEA]"} 
+                                ? "border-[#336EB1] text-[#336EB1] bg-[#D8E5F3]"
+                                : "border-[#707070] text-[#707070] bg-[#EAEAEA]"} 
                     rounded-lg`}>semana</button>
-                <button onClick={() => setTimeline("mes")} className={`
+                        <button onClick={() => setTimeline("mes")} className={`
                     first-letter:uppercase px-8 py-3 border-[1px] 
                     ${timeline === "mes"
-                        ? "border-[#336EB1] text-[#336EB1] bg-[#D8E5F3]"
-                        : "border-[#707070] text-[#707070] bg-[#EAEAEA]"} 
+                                ? "border-[#336EB1] text-[#336EB1] bg-[#D8E5F3]"
+                                : "border-[#707070] text-[#707070] bg-[#EAEAEA]"} 
                     rounded-lg`}>mes</button>
-            </div>
+                    </div>
+                )
+            }
+
 
             <div className="border-[1px] border-[#707070] rounded-lg mt-3">
                 <div className="w-full flex justify-end py-2">
@@ -68,43 +74,43 @@ const ProductChart = ({ timeline, setTimeline, chart, setChart, filteredChartDat
                 </div>
 
                 <ChartContainer config={chartConfig}>
-                        <BarChart accessibilityLayer data={filteredChartData}>
-                            <CartesianGrid vertical={false} />
-                            <YAxis
-                                dataKey="entrada"
-                                tickFormatter={(value)=> value}
-                            />
-                            <XAxis
-                                dataKey={timeline === "semana" ? 'fecha' : "semana"}
-                                tickLine={false}
-                                tickMargin={10}
-                                axisLine={false}
-                                tickFormatter={(value) => timeline === "semana" ? value.slice(0,8) : value}
-                            />
-                            <ChartTooltip
-                                cursor={false}
-                                content={<ChartTooltipContent indicator="dashed" />}
-                            />
-                            {chart === "ambos" && (
-                                <>
-                                    <Bar dataKey="entrada" className="fill-[#19AD0F]" fill="var(--color-desktop)" radius={4} />
-                                    <Bar dataKey="salida" className="fill-[#DD1313]" fill="var(--color-mobile)" radius={4} />
-                                </>
-                            )}
-                            {
-                                chart === "entrada" && (
-                                    <Bar dataKey="entrada" className="fill-[#19AD0F]" fill="var(--color-desktop)" radius={4} />
-                                )
-                            }
+                    <BarChart accessibilityLayer data={filteredChartData}>
+                        <CartesianGrid vertical={false} />
+                        <YAxis
+                            dataKey="entrada"
+                            tickFormatter={(value) => value}
+                        />
+                        <XAxis
+                            dataKey={timeline === "semana" ? 'fecha' : "semana"}
+                            tickLine={false}
+                            tickMargin={10}
+                            axisLine={false}
+                            tickFormatter={(value) => timeline === "semana" ? value.slice(0, 8) : value}
+                        />
+                        <ChartTooltip
+                            cursor={false}
+                            content={<ChartTooltipContent indicator="dashed" />}
+                        />
+                        {chart === "ambos" && (
+                            <>
+                                <Bar dataKey="entrada" className="fill-[#19AD0F]" fill="var(--color-desktop)" radius={4} />
+                                <Bar dataKey="salida" className="fill-[#DD1313]" fill="var(--color-mobile)" radius={4} />
+                            </>
+                        )}
+                        {
+                            chart === "entrada" && (
+                                <Bar dataKey="entrada" className="fill-[#19AD0F]" fill="var(--color-desktop)" radius={4} />
+                            )
+                        }
 
-                            {
-                                chart === "salida" && (
-                                    <Bar dataKey="salida" className="fill-[#DD1313]" fill="var(--color-mobile)" radius={4} />
-                                )
-                            }
+                        {
+                            chart === "salida" && (
+                                <Bar dataKey="salida" className="fill-[#DD1313]" fill="var(--color-mobile)" radius={4} />
+                            )
+                        }
 
-                        </BarChart>
-                    </ChartContainer>
+                    </BarChart>
+                </ChartContainer>
 
             </div>
 
