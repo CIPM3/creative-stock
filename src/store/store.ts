@@ -122,4 +122,9 @@ export const useServiciosStore = create<StoreServicio>((set,get) => ({
 
     return serviciosEncontrados;
   },
+  getServicioById:(id:string):Servicio | null =>{
+    const servicios = get().servicio as Servicio[]
+
+    return servicios.find((servicio)=>servicio.id === id) || null;
+  }
 }))

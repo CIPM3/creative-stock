@@ -138,6 +138,40 @@ const handleStock = (data: Stock[], product: Product): StockSummary[] => {
   return result;
 };
 
+function getDaysInMonth(month: number, year: number) {
+  const date = new Date(year, month - 1, 1); // Meses en JavaScript van de 0 a 11
+  const days = [];
+
+  while (date.getMonth() === month - 1) {
+      const day = date.getDate().toString().padStart(2, '0');
+      const monthStr = (date.getMonth() + 1).toString().padStart(2, '0');
+      const yearStr = date.getFullYear().toString().slice(-2); // Obtener los últimos 2 dígitos del año
+      days.push(`${day}/${monthStr}/${yearStr}`);
+      date.setDate(date.getDate() + 1); // Avanzar al siguiente día
+  }
+
+  return days;
+}
+
+function splitIntoWeeks(days: string[]) {
+  const weeks = [];
+  for (let i = 0; i < days.length; i += 7) {
+      const weekNumber = Math.floor(i / 7) + 1;
+      const weekDays = days.slice(i, i + 7);
+      weeks.push({
+          fecha: `semana ${weekNumber}`,
+          dias: weekDays
+      });
+  }
+  return weeks;
+}
+
+function generateWeeksForMonth(month:number, year:number) {
+  const days = getDaysInMonth(month, year);
+  const weeks = splitIntoWeeks(days);
+  return weeks;
+}
+
 
 export {
   obtenerDiasDeLaSemana,
@@ -146,5 +180,8 @@ export {
   calcularTotalServicios,
   getCatColors,
   formatDate,
-  handleStock
+  handleStock,
+  getDaysInMonth,
+  splitIntoWeeks,
+  generateWeeksForMonth
 }

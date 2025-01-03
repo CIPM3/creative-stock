@@ -65,7 +65,7 @@ const AgregarServicio = () => {
 
     return (
         <Dialog key={`Agregar Servicio`}>
-            <DialogTrigger ref={dialogRef} className="px-4 h-14 col-start-2 col-end-4 text-lg flex justify-center items-center gap-x-1 rounded-lg text-white bg-[#0077FF]">
+            <DialogTrigger ref={dialogRef} className="px-4 h-14 w-full text-lg flex justify-center items-center gap-x-1 rounded-lg text-white bg-[#0077FF]">
                 <Plus className="size-4 text-white" />
                 Agregar Servicio
             </DialogTrigger>

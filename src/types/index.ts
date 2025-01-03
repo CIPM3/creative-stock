@@ -48,6 +48,7 @@ export type StoreServicio = {
     agregarServicio: (nuevoProducto: Servicio) => void;
     seleccionarFiltro: (categoria: string | null) => void;
     getServiciosByCita: (serviciosId: string[]) => Servicio[];
+    getServicioById:(id:string)=> Servicio | null;
 }
 
 

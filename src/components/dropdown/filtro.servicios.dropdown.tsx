@@ -57,7 +57,7 @@ const FiltroServiciosDropdown = () => {
 
     return (
         <DropdownMenu>
-            <DropdownMenuTrigger className="col-start-1 outline-none col-end-2">
+            <DropdownMenuTrigger className="w-full">
                 <div className="px-2 h-14 w-full outline-none flex items-center justify-center gap-x-1 text-lg rounded-lg border border-[#707070]">
                     {
                         SelectedFilter !== null

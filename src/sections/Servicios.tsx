@@ -9,13 +9,19 @@ const Servicios = () => {
 
   const [SearchServicios, setSearchServicios] = useState("")
   const [DataFiltrada, setDataFiltrada] = useState(serviciosData)
+  const [loading, setLoading] = useState(true);
 
   const cargarServicios = useServiciosStore((state) => state.cargarServicios)
   const filtro = useServiciosStore((state) => state.selectedFilter)
 
   useEffect(() => {
-    cargarServicios()
-  }, [])
+    const fetchData = async () => {
+      setLoading(true);
+      await cargarServicios();
+      setLoading(false);
+    };
+    fetchData();
+  }, []);
 
   useEffect(() => {
     HandleData()
@@ -67,21 +73,18 @@ const Servicios = () => {
 
   return (
     <div className="w-full min-h-[90dvh]">
-      <div className="flex items-center px-[70px] pt-[37px] pb-6 justify-between">
+      <div className="flex items-center lg:px-[30px] xl:px-[70px] pt-[37px] pb-6 justify-between">
         <div className="flex flex-col w-1/2 ">
           <h2 className="text-4xl font-semibold text-[#3C3C3C]">Servicios</h2>
-
         </div>
-
         <div className="flex flex-col w-1/2 overflow-hidden relative items-end">
           <SearchInput onChange={(e) => {
-            // Aquí tu lógica de búsqueda
             setSearchServicios(e.target.value)
           }} />
         </div>
       </div>
-      <div className="flex flex-col justify-center px-[70px] ">
-        <ServiciosTable data={DataFiltrada} />
+      <div className="flex flex-col justify-center lg:px-[30px] xl:px-[70px] ">
+        <ServiciosTable data={DataFiltrada} loading={loading}/>
       </div>
     </div>
   )

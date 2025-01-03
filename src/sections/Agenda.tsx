@@ -15,6 +15,7 @@ const Agenda = () => {
   const citas = useCitasStore((state) => state.citas)
 
   const cargarServicios = useServiciosStore((state)=> state.cargarServicios)
+  const getServicioById = useServiciosStore((state)=>state.getServicioById)
   
   useEffect(() => {
     cargarServicios()
@@ -31,19 +32,36 @@ const Agenda = () => {
 
   // Función para filtrar y ordenar citas
   const filtrarYOrdenarCitas = (fechaFiltro: string) => {
-    const [diaFiltro, mesFiltro, anioFiltro] = fechaFiltro.split('/');
-    return citas.filter(cita => {
+    if (!citas) return []; // Verificar si citas es undefined o null
+
+    const [diaFiltro, mesFiltro, anioFiltro] = fechaFiltro.split('/').map(num => num.padStart(2, '0'));
+
+    // Filtrar citas
+    const filteredData = citas.filter(cita => {
       const [diaCita, mesCita, anioCita] = cita.fecha.split('/');
       const nombreFiltro = searchClient.toLowerCase();
       const servicioFiltro = selectedFilter;
-      return diaCita === diaFiltro && mesCita === mesFiltro && anioCita === anioFiltro &&
-             (!nombreFiltro || cita.nombre.toLowerCase().includes(nombreFiltro)) &&
-             (!servicioFiltro || cita.servicios.includes(servicioFiltro));
-    }).sort((a, b) => {
+      const servicioCita = cita.servicios.map(servicio => getServicioById(servicio))
+
+      // Verificar si la cita coincide con el filtro de fecha
+      const fechaCoincide = diaCita === diaFiltro && 
+                            (mesCita === mesFiltro ) && // Permitir el mes anterior
+                            (anioCita === anioFiltro); // Permitir el año pasado
+
+      // Verificar si la cita coincide con el filtro de nombre y servicio
+      const nombreCoincide = !nombreFiltro || cita.nombre.toLowerCase().includes(nombreFiltro);
+      const servicioCoincide = !servicioFiltro || servicioCita.some(servicio => servicio?.category === servicioFiltro);
+      return fechaCoincide && nombreCoincide && servicioCoincide;
+    });
+
+    // Ordenar citas por hora
+    const sortedData = filteredData.sort((a, b) => {
       const horaA = convertirAHora24(a.hora);
       const horaB = convertirAHora24(b.hora);
       return horaA - horaB;
     });
+
+    return sortedData;
   };
 
   const convertirAHora24 = (hora: string) => {
@@ -54,7 +72,7 @@ const Agenda = () => {
 
   return (
     <div className="w-full min-h-[90dvh]">
-      <div className="flex items-center px-[70px] pt-[37px] pb-6 justify-between">
+      <div className="flex items-center lg:px-[30px] xl:px-[70px] pt-[37px] pb-6 justify-between">
         <div className="flex flex-col w-1/2">
           <h2 className="text-4xl font-semibold text-[#3C3C3C]">Agenda</h2>
           <div className="flex items-center gap-4 pt-3">
@@ -89,8 +107,9 @@ const AgendaSemanal = ({ filtrarYOrdenarCitas }: ASProps) => {
   const Days = obtenerDiasDeLaSemana()
   const dialogRef = useRef<HTMLButtonElement>(null)
 
+
   return (
-    <div className="w-full h-full min-h-[70vh] px-[70px] pt-6 pb-6 bg-[#EAEAEA]">
+    <div className="w-full h-full min-h-[70vh] lg:px-[30px] xl:px-[70px] pt-6 pb-6 bg-[#EAEAEA]">
       {/* DIAS */}
       <div className="w-full h-fit grid grid-cols-7 gap-3">
         {
@@ -147,7 +166,7 @@ const AgendaMensual = ({ filtrarYOrdenarCitas }: ASProps) => {
   const cancelarRef = useRef<HTMLButtonElement>(null)
 
   return (
-    <div className="w-full h-full px-[70px] pt-6 pb-6 bg-[#EAEAEA]">
+    <div className="w-full h-full lg:px-[30px] xl:px-[70px] pt-6 pb-6 bg-[#EAEAEA]">
       {/* Renderizar el calendario */}
       <div className="w-full h-fit place-content-center gap-3">
         {semanas.map((semana, index) => (

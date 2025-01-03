@@ -34,25 +34,25 @@ const ToolTipItem = ({ cita }: PropsChild) => {
                 <Close className="size-3 fill-white" />
             </div>
 
-            <div className="bg-white px-2 py-2 flex items-start justify-between">
-                <div className="grid grid-cols-2 w-1/2 gap-1">
+            <div className="bg-white px-2 py-2 grid grid-cols-5 items-start justify-between">
+                <div className="flex flex-wrap col-start-1 col-end-4 gap-1">
                     {
                         ServiciosCita.map(servicio => (
                             <div className="size-10 relative cursor-pointer border group flex items-center justify-center  border-black rounded-lg group-hover:bg-gray-200">
                                 <img src={obtenerIconoServicio(servicio.category)} alt={servicio.id} className=" size-7 object-cover" />
                                 <span className="absolute text-[12px] bg-white hidden group-hover:block left-10 top-0 z-10">{servicio.name}</span>
-                                
+
                             </div>
                         ))
                     }
                 </div>
 
-                <div className="grid w-1/2 grid-cols-1">
+                <div className="col-start-4 col-end-6">
                     <p className="text-sm text-[#3C3C3C] font-bold text-end">{
                         cita.hora
                     }</p>
                     <p className="text-sm font-semibold text-[#9A9A9A] text-end">
-                        {cita.total}
+                        $ {cita.total}
                     </p>
                 </div>
             </div>

@@ -68,7 +68,7 @@ const Producto = () => {
 
     return (
         <div className="w-full min-h-[90dvh]">
-            <div className="flex flex-col justify-centers px-[70px] pt-[37px] pb-6 justify-between">
+            <div className="flex flex-col justify-centers lg:px-[30px] xl:px-[70px] pt-[37px] pb-6 justify-between">
 
                 {/* PRODUCTO HEADER */}
                 <div className="flex flex-col w-1/2 ">

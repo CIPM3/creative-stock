@@ -13,7 +13,7 @@ import {
 
 import { Formik, Form } from 'formik';
 
-import { Loader2, Plus } from "lucide-react"
+import { Loader2 } from "lucide-react"
 import WithLabel from "../inputs/withLabel.input"
 import { useRef, useState } from "react"
 import { getCatColors } from "@/funcs"
@@ -58,10 +58,9 @@ const AgregarProductDialog = () => {
   }
   return (
     <Dialog>
-      <DialogTrigger ref={dialogRef} className="col-start-2 col-end-4">
-        <div className="px-4 h-14  text-lg flex items-center gap-x-1 rounded-lg text-white bg-[#0077FF]">
-          <Plus className="size-4 text-white" />
-          Agregar Producto
+      <DialogTrigger ref={dialogRef} className="w-full">
+        <div className="px-4 h-14  text-[15px] flex justify-center items-center gap-x-1 rounded-lg text-white bg-[#0077FF]">
+          Agregar
         </div>
       </DialogTrigger>
       <DialogContent className="w-1/2 max-w-[700px] flex flex-col items-center py-20">
