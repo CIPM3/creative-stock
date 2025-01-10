@@ -1,3 +1,5 @@
+import { CategoryMap } from "@/types";
+
 const FakeData = [
     {
         nombre: "Nombre Apellido",
@@ -368,9 +370,27 @@ const FakeServiciosData = [
   },
 ]
 
+const categoryMap: CategoryMap = {
+  Productos: {
+    todo: null,
+    cabello: 'cabello',
+    maquillaje: 'maquillaje',
+    unas: 'uñas',
+    otros: 'masaje',
+  },
+  Servicios: {
+    todo: null,
+    cabello: 'corte',
+    maquillaje: 'labial',
+    unas: 'unas',
+    otros: 'masaje',
+  },
+};
+
 export {
     FakeData,
     RandomColors,
     FakeDataProduct,
-    FakeServiciosData
+    FakeServiciosData,
+    categoryMap
 }

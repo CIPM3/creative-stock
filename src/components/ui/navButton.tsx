@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
-import { Calendario, Productos, Analiticas, Servicios } from "../../assets/svg";
+import { Calendario, Productos, Analiticas, Servicios, Tarjeta } from "../../assets/svg";
 
 interface Props {
-    type: "calendario" | "productos" | "servicios" | "analiticas"|'no',
+    type: "calendario" | "productos" | "servicios" | "analiticas" | 'POV' | 'no',
     name: string,
     selected: boolean
 }
@@ -21,6 +21,8 @@ const navButton = ({ type, name, selected }: Props) => {
                 return <Servicios className={`${selected ? "fill-blue-500" : "fill-[#3C3C3C]"} size-6`} />;
             case "analiticas":
                 return <Analiticas className={`${selected ? "fill-blue-500" : "fill-[#3C3C3C]"} size-6`} />;
+            case "POV":
+                return <Tarjeta className={`${selected ? "stroke-blue-500" : "stroke-[#3C3C3C]"} size-6`} />;
             default:
                 return null;
         }
@@ -38,6 +40,9 @@ const navButton = ({ type, name, selected }: Props) => {
                 navigate(`/${type}`)
                 break;
             case "analiticas":
+                navigate(`/${type}`)
+                break;
+            case "POV":
                 navigate(`/${type}`)
                 break;
             default:

@@ -24,7 +24,8 @@ export default tseslint.config(
         { allowConstantExport: true },
       ],
       'react-hooks/rules-of-hooks': 'error', // Checks rules of Hooks
-      'react-hooks/exhaustive-deps': 'warn'
+      'react-hooks/exhaustive-deps': 'warn',
+      '@typescript-eslint/no-non-null-assertion': 'off',
     },
   },
 )

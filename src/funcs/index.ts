@@ -1,5 +1,6 @@
-import { Product, Servicio, Stock, StockSummary } from "@/types";
+import { FieldSelectedType, ItemFiltersType, Product, Servicio, Stock, StockSummary } from "@/types";
 import { corte,labial,lavado,unas } from "../assets/icons";
+import { categoryMap } from "@/data";
 
 const obtenerDiasDeLaSemana = () => {
   const dias = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
@@ -50,14 +51,15 @@ const calcularTotalServicios = (servicios: Servicio[]): number => {
 }
 
 const getCatColors = (categorie:string) => {
-  if(categorie === "cabello")
+  if(categorie === "cabello" || categorie === "corte")
       return 'text-[#BC1275] border-[#BC1275] bg-[#FFD4ED]'
-  if(categorie === "uñas")
+  if(categorie === "uñas" || categorie === "unas")
       return 'text-[#867A28] border-[#867A28] bg-[#FFF9D4]'
-  if(categorie === "maquillaje")
+  if(categorie === "maquillaje" || categorie === "labial")
       return 'text-[#2892B3] border-[#2892B3] bg-[#D4F5FF]'
-  
-  return 'text-[#7B49E0] border-[#7B49E0] bg-[#E2D4FF]'
+  if(categorie === "masaje")
+      return 'text-[#7B49E0] border-[#7B49E0] bg-[#E2D4FF]'
+  return 'text-[#336EB1] border-[#336EB1] bg-[#D8E5F3]'
 }
 
 // utils/formatDate.ts
@@ -172,6 +174,33 @@ function generateWeeksForMonth(month:number, year:number) {
   return weeks;
 }
 
+const Filter_POV_Data = <T extends Product | Servicio>(
+  data: T[],
+  fieldSelected: FieldSelectedType,
+  itemFilters: ItemFiltersType,
+  inputText: string
+): T[] => {
+  let filtered = data;
+
+  // Obtener la categoría correspondiente desde el mapeo
+  const category = categoryMap[fieldSelected][itemFilters];
+
+  // Aplicar filtro por categoría si no es 'todo' y la categoría existe
+  if (itemFilters !== 'todo' && category) {
+    filtered = filtered.filter(item => item.category === category);
+  }
+
+  // Aplicar filtro por texto de entrada si no está vacío
+  if (inputText.trim() !== '') {
+    const lowerInput = inputText.toLowerCase();
+    filtered = filtered.filter(item =>
+      item.name.toLowerCase().includes(lowerInput)
+    );
+  }
+
+  return filtered;
+};
+
 
 export {
   obtenerDiasDeLaSemana,
@@ -183,5 +212,6 @@ export {
   handleStock,
   getDaysInMonth,
   splitIntoWeeks,
-  generateWeeksForMonth
+  generateWeeksForMonth,
+  Filter_POV_Data
 }

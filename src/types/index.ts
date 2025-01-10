@@ -23,9 +23,9 @@ export type StoreProducts = {
     selectedFilter: string | null;
     selectedProduct: Product | null;
     seleccionarFiltro: (categoria: string | null) => void;
-    selectProducto: (id: string ) => void;
+    selectProducto: (id: string) => void;
     searchInput: string | null;
-    searchInputProduct: (search:string | null) => void;
+    searchInputProduct: (search: string | null) => void;
     agregarProduct: (nuevoProducto: Product) => void;
     eliminarProduct: (id: string) => void;
     actualizarProduct: (prodcutoActualizado: Product) => void;
@@ -48,7 +48,7 @@ export type StoreServicio = {
     agregarServicio: (nuevoProducto: Servicio) => void;
     seleccionarFiltro: (categoria: string | null) => void;
     getServiciosByCita: (serviciosId: string[]) => Servicio[];
-    getServicioById:(id:string)=> Servicio | null;
+    getServicioById: (id: string) => Servicio | null;
 }
 
 
@@ -70,6 +70,7 @@ export type Cita = {
     nombre: string;
     servicios: string[];
     total: number
+    pagado?: boolean
 };
 
 export type CitaInput = {
@@ -82,18 +83,18 @@ export type CitaInput = {
 }
 
 export type Stock = {
-    id:string,
-    cantidad:number,
+    id: string,
+    cantidad: number,
     fecha: string,
-    productoId:string,
-    tipo:string
+    productoId: string,
+    tipo: string
 }
 
 export type Precio = {
-    id:string,
+    id: string,
     precioCompra: number,
     precioVenta: number,
-    productId:string
+    productId: string
 }
 
 export interface StockSummary {
@@ -101,7 +102,7 @@ export interface StockSummary {
     entradaDeStock: number;
     salidaDeStock: number;
     productID: string;
-    tipo?:string
+    tipo?: string
 }
 
 export type Servicio = {
@@ -111,3 +112,15 @@ export type Servicio = {
     agendados: number;
     total: number;
 }
+
+export type CategoryMap = {
+    Productos: {
+        [key in 'todo' | 'cabello' | 'maquillaje' | 'unas' | 'otros']: Product['category'] | null;
+    };
+    Servicios: {
+        [key in 'todo' | 'cabello' | 'maquillaje' | 'unas' | 'otros']: Servicio['category'] | null;
+    };
+};
+
+export type FieldSelectedType = 'Productos' | 'Servicios';
+export type ItemFiltersType = 'todo' | 'cabello' | 'maquillaje' | 'unas' | 'otros';

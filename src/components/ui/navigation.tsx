@@ -25,6 +25,11 @@ const Navigation = () => {
           type='analiticas'
           selected={location.pathname === "/analiticas"}
         />
+        <NavButton
+          name='Punto de Venta'
+          type='POV'
+          selected={location.pathname === "/POV"}
+        />
       </div>
   )
 }

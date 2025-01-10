@@ -13,6 +13,9 @@ import CategoriaSvg from './categoria.svg';
 import StockSvg from './stock.svg';
 import VentasSvg from './ventas.svg';
 import Entradas from './entradas.svg';
+import Tarjeta from "./Tarjeta";
+import All from './all';
+
 export {
     Calendario,
     Productos,
@@ -28,5 +31,7 @@ export {
     CategoriaSvg,
     StockSvg,
     VentasSvg,
-    Entradas
+    Entradas,
+    Tarjeta,
+    All
 }
