@@ -36,8 +36,10 @@ const Agenda = () => {
 
     const [diaFiltro, mesFiltro, anioFiltro] = fechaFiltro.split('/').map(num => num.padStart(2, '0'));
 
+    let FilteredByPagado = citas.filter(citas => citas.pagado !== true)
+
     // Filtrar citas
-    const filteredData = citas.filter(cita => {
+    const filteredData = FilteredByPagado.filter(cita => {
       const [diaCita, mesCita, anioCita] = cita.fecha.split('/');
       const nombreFiltro = searchClient.toLowerCase();
       const servicioFiltro = selectedFilter;

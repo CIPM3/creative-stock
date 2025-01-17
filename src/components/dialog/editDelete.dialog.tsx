@@ -49,7 +49,7 @@ const EditDeleteDialog = ({ type, product }: Props) => {
     const eliminarProducto = useProductosStore((state) => state.eliminarProduct)
 
     const mutationUpdate = useMutation<Product, Error, Product>({
-        mutationFn: (finalData) => updateProduct(product.id,finalData)
+        mutationFn: (finalData) => updateProduct(product.id, finalData)
     });
 
     const mutationDelete = useMutation<Product | null, Error, Product>({
@@ -160,7 +160,27 @@ const EditDeleteDialog = ({ type, product }: Props) => {
                                         value={values.stock.toString()}
                                     />
                                 </div>
+                            </div>
+                            <div className="w-full flex mt-5 items-center gap-x-1 justify-start">
 
+                                <div className="w-1/2 flex items-center gap-x-2">
+                                    <WithLabel
+                                        className={`${errors.precio && 'border-red-500'} mt-2`}
+                                        onChange={(e) => setFieldValue('total', e.target.value)}
+                                        label="Precio Compra"
+                                        name="precio"
+                                        type="number"
+                                        value={values.precio.toString()}
+                                    />
+                                    <WithLabel
+                                        className={`${errors.total && 'border-red-500'} mt-2`}
+                                        onChange={(e) => setFieldValue('total', e.target.value)}
+                                        label="Precio Venta"
+                                        name="total"
+                                        type="number"
+                                        value={values.total.toString()}
+                                    />
+                                </div>
                             </div>
 
                             <div className="w-full flex justify-end">

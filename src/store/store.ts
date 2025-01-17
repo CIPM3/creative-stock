@@ -1,11 +1,14 @@
 import { create } from 'zustand'
-import { Cita, CitasMethod, Servicio, StoreCitas, StorePrecios, StoreProducts, StoreServicio, StoreStock } from '../types'
+import { Cita, CitasMethod, FacturaDetalleItem, StoreCitas, StorePrecios, StoreProducts, StoreServicio, StoreStock } from '../types'
 import { getCitas } from '@/api/citas/citas.get'
 import { getProducts } from '@/api/productos/producto.get'
 import { FakeDataProduct } from '@/data'
 import { getStock } from '@/api/stock/stock.get'
 import { getPrecios } from '@/api/precios/precios.get'
 import { getServicios } from '@/api/servicios/servicios.get'
+import { StorePOV, Servicio } from '../types/index';
+import { nanoid } from 'nanoid';
+import { GET_FACTURAS_DB } from '@/api/facturas/facturas.get'
 
 
 export const useCitasStore = create<StoreCitas>((set) => ({
@@ -90,7 +93,7 @@ export const usePreciosStore = create<StorePrecios>((set) => ({
   }
 }))
 
-export const useServiciosStore = create<StoreServicio>((set,get) => ({
+export const useServiciosStore = create<StoreServicio>((set, get) => ({
   servicio: [],
   cargarServicios: async () => {
     if (process.env.NODE_ENV === 'production') {
@@ -122,9 +125,131 @@ export const useServiciosStore = create<StoreServicio>((set,get) => ({
 
     return serviciosEncontrados;
   },
-  getServicioById:(id:string):Servicio | null =>{
+  getServicioById: (id: string): Servicio | null => {
     const servicios = get().servicio as Servicio[]
 
-    return servicios.find((servicio)=>servicio.id === id) || null;
+    return servicios.find((servicio) => servicio.id === id) || null;
   }
+}))
+
+export const usePOVStore = create<StorePOV>((set) => ({
+  servicioPOV: [],
+  productosPOV: [],
+  selectedAgendado: null,
+  // Iniciamos factura con datos vacíos (y un id generado)
+  facturas: [],
+  factura: {
+    id: nanoid(),
+    serviciosIds: [],
+    total: 16,
+    impuestoPorcentaje: 0,
+    tipoPago: 'efectivo',
+    idCita: '', // o quítalo si ya no lo usas
+  },
+  cargarFacturas: async () => {
+    const data = await GET_FACTURAS_DB();
+      //const fakeData = FakeServiciosData
+      set({ facturas: [...data] });
+  },
+  agregarServiciosAPov: (servicios) => set(() => ({ servicioPOV: servicios })),
+  agregarProductosAPov: (productos) => set(() => ({ productosPOV: productos })),
+  seleccionarAgendado: (cita) => set(() => ({ selectedAgendado: cita })),
+  // Crea una nueva factura (si la quieres crear en algún momento)
+  agregarAFactura: (item) => set(() => ({ factura: item })),
+  // Actualiza campos de la factura actual
+  actualizarFactura: (cambios) => set((state) => ({
+    factura: { ...state.factura, ...cambios },
+  })),
+  // Limpia la factura (reinicia a valores por defecto)
+  limpiarFactura: () => set(() => ({
+    factura: {
+      // Si deseas regenerar un nuevo id automáticamente:
+      id: nanoid(),
+      serviciosIds: [],
+      total: 0,
+      impuestoPorcentaje: 16,
+      tipoPago: "efectivo",
+      idCita: ""
+    },
+  })),
+  // Elimina un servicio (detalle) de la factura
+  eliminarServicioFactura: (servicioId) =>
+    set((state) => {
+      const updatedDetalles = state.factura.serviciosIds.filter(
+        (detalle) => detalle.id !== servicioId
+      );
+      const newPrecio = updatedDetalles.reduce((acc, d) => acc + d.total, 0);
+      return {
+        factura: {
+          ...state.factura,
+          serviciosIds: updatedDetalles,
+          precio: newPrecio,
+        },
+      };
+    }),
+  // Actualiza el impuesto de la factura
+  actualizarImpuestos: (impuestoPorcentaje) =>
+    set((state) => ({
+      factura: {
+        ...state.factura,
+        impuestoPorcentaje,
+      },
+    })),
+  // Cambia método de pago
+  cambiarMetodoPago: (metodo) =>
+    set((state) => ({
+      factura: {
+        ...state.factura,
+        tipoPago: metodo,
+      },
+    })),
+  // Agrega un servicio (detalle) a la factura
+  agregarServicioAFactura: (detalle: FacturaDetalleItem) =>
+    set((state) => {
+      // Busca si ya existe un item con ese id en la factura
+      const exists = state.factura.serviciosIds.find((d) => d.id === detalle.id);
+      let nuevosDetalles;
+      if (exists) {
+        // Si existe, incrementamos la cantidad y recalculamos el total
+        nuevosDetalles = state.factura.serviciosIds.map((d) => {
+          if (d.id === detalle.id) {
+            // Lógica de incremento:
+            const nuevaCantidad = d.cantidad + detalle.cantidad;
+            // Si tu total es (precio unitario * cantidad), recalcula así:
+            const nuevoTotal = Number(d.total) + Number(detalle.total);
+            // O, si guardas un precio unitario en 'detalle' y sumas cantidades, podrías hacer:
+            // const precioUnit = d.total / d.cantidad; 
+            // const nuevoTotal = precioUnit * nuevaCantidad;
+            return {
+              ...d,
+              cantidad: nuevaCantidad,
+              total: nuevoTotal,
+            };
+          }
+          return d; // Los demás ítems no cambian
+        });
+      } else {
+        // Si no existe, agregamos el nuevo ítem
+        nuevosDetalles = [...state.factura.serviciosIds, detalle];
+      }
+
+      // Recalculamos el total global
+      const newPrecio = nuevosDetalles.reduce((acc, d) => acc + d.total, 0);
+
+      return {
+        factura: {
+          ...state.factura,
+          serviciosIds: nuevosDetalles,
+          total: newPrecio,
+        },
+      };
+    }),
+  // Método opcional para regenerar un invoiceId sin depender de la cita
+  generarInvoiceId: () =>
+    set((state) => ({
+      factura: {
+        ...state.factura,
+        id: nanoid(),
+      },
+    })),
 }))

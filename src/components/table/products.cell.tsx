@@ -12,6 +12,7 @@ const TableCell = ({ product }: TableCellProps) => {
 
     const navigate = useNavigate()
 
+
     return (
         <div
             key={product.id}
@@ -36,7 +37,7 @@ const TableCell = ({ product }: TableCellProps) => {
             </div>
             <div className="col-span-1 justify-center flex text-xl">
                 <span className={`font-semibold text-[#19AD0F]`}>
-                    ${product.incomes}
+                    {/* ${product. || 1 * product.precio!!} */}
                 </span>
             </div>
             <div className="col-span-3 lg:col-span-4 xl:col-span-3 pr-3  flex gap-x-1 items-center justify-end ">

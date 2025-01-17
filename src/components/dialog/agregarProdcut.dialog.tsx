@@ -117,7 +117,7 @@ const AgregarProductDialog = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              <div className="w-1/4 pt-10">
+              <div className="w-1/2 flex items-center gap-x-3 pt-10">
                 <WithLabel
                   className={`${errors.stock && 'border-red-500'}`}
                   onChange={(e) => setFieldValue('stock', e.target.value)}
@@ -125,6 +125,22 @@ const AgregarProductDialog = () => {
                   name="stock"
                   type="number"
                   value={values.stock.toString()}
+                />
+                <WithLabel
+                  className={`${errors.precio && 'border-red-500'}`}
+                  onChange={(e) => setFieldValue('precio', e.target.value)}
+                  label="P. Compra"
+                  name="precio"
+                  type="number"
+                  value={values.precio.toString()}
+                />
+                <WithLabel
+                  className={`${errors.total && 'border-red-500'}`}
+                  onChange={(e) => setFieldValue('total', e.target.value)}
+                  label="Precio Venta"
+                  name="total"
+                  type="number"
+                  value={values.total.toString()}
                 />
               </div>
 

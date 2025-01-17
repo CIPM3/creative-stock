@@ -51,6 +51,45 @@ export type StoreServicio = {
     getServicioById: (id: string) => Servicio | null;
 }
 
+export type StorePOV = {
+    servicioPOV: Servicio[];
+    productosPOV: Product[];
+    selectedAgendado: Cita | null;
+
+    factura: FacturaItem;  // <--- ahora es un solo objeto (no un array)
+    facturas: FacturaItem[];
+    agregarServiciosAPov: (servicio: Servicio[]) => void;
+    agregarProductosAPov: (producto: Product[]) => void;
+    seleccionarAgendado: (cita: Cita | null) => void;
+    cargarFacturas: () => Promise<void>;
+    agregarAFactura: (item: FacturaItem) => void;
+    actualizarFactura: (cambios: Partial<FacturaItem>) => void; // sin `id`, porque ya habrá solo uno
+    limpiarFactura: () => void;
+    eliminarServicioFactura: (servicioId: string) => void;
+    actualizarImpuestos: (impuestoPorcentaje: number) => void;
+    cambiarMetodoPago: (metodo: 'efectivo' | 'tarjeta') => void;
+    agregarServicioAFactura: (detalle: FacturaDetalleItem) => void;
+    generarInvoiceId: () => void;
+}
+
+export type FacturaDetalleItem = {
+    id: string;         // Id del servicio o producto
+    name: string;       // Nombre del servicio o producto
+    cantidad: number;   // Cantidad adquirida para este ítem
+    total: number;      // Total para este ítem (por ejemplo, precio unitario * cantidad)
+}
+
+export type FacturaItem = {
+    id: string;                        // Identificador único del ítem de factura  
+    serviciosIds: FacturaDetalleItem[];  // Arreglo de detalles de servicios o productos  
+    total: number;                    // Cantidad total adquirida (puede servir para datos globales si se requiere)
+    impuestoPorcentaje: number;        // Porcentaje de impuestos  
+    tipoPago: 'efectivo' | 'tarjeta';    // Tipo de pago  
+    idCita: string;                    // ID de la cita  
+    fecha?: string;
+    tipo?: 'Productos' | 'Servicios'
+}
+
 
 //NORMAL TYPES
 export type Product = {
@@ -60,7 +99,9 @@ export type Product = {
     stock: number;
     sells: number;
     incomes: number;
-    fecha?: string
+    fecha?: string;
+    total?: number
+    precio?: number
 }
 
 export type Cita = {
@@ -111,6 +152,7 @@ export type Servicio = {
     category: string;
     agendados: number;
     total: number;
+    precio?: number
 }
 
 export type CategoryMap = {
@@ -121,6 +163,14 @@ export type CategoryMap = {
         [key in 'todo' | 'cabello' | 'maquillaje' | 'unas' | 'otros']: Servicio['category'] | null;
     };
 };
+
+export interface Stats {
+    ventasDelDia: number;
+    ventasDelMes: number;
+    salidasDelDia: number;
+    salidasDelMes: number;
+}
+
 
 export type FieldSelectedType = 'Productos' | 'Servicios';
 export type ItemFiltersType = 'todo' | 'cabello' | 'maquillaje' | 'unas' | 'otros';

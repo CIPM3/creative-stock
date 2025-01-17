@@ -1,5 +1,5 @@
 import { getCatColors, handleStock } from "@/funcs"
-import { useStockStore,usePreciosStore } from "@/store/store"
+import { useStockStore, useProductosStore } from "@/store/store"
 import { Product } from "@/types"
 import { useEffect, useState } from "react"
 
@@ -7,10 +7,10 @@ interface Props {
     firstText?: string
     secondText?: string
     product: Product,
-    type:'stock'|'salida'
+    type: 'stock' | 'salida'
 }
 
-const ProductTable = ({ product, firstText, secondText,type }: Props) => {
+const ProductTable = ({ product, firstText, secondText, type }: Props) => {
 
     const stocks = useStockStore((state) => state.stock)
     const cargarStock = useStockStore((state) => state.cargarStock)
@@ -22,7 +22,6 @@ const ProductTable = ({ product, firstText, secondText,type }: Props) => {
         cargarStock()
         setisLoading(false)
     }, [])
-
 
     const filteredStock = handleStock(stocks, product)
 
@@ -43,7 +42,7 @@ const ProductTable = ({ product, firstText, secondText,type }: Props) => {
                 ) : stocks ? (
                     <>
                         {
-                            filteredStock.map((stock,index) => (
+                            filteredStock.map((stock, index) => (
                                 <TableCellProduct
                                     key={index}
                                     producto={{
@@ -84,15 +83,31 @@ interface PropsTable {
 }
 
 const TableCellProduct = ({ producto, type }: PropsTable) => {
-    const precios = usePreciosStore((state) => state.precios)
-    const cargarPrecios = usePreciosStore((state) => state.cargarPrecios)
+    const productos = useProductosStore((s) => s.productos)
+    const stocks = useStockStore((state) => state.stock)
 
+    const [TOTAL_SALIDAS, setTOTAL_SALIDAS] = useState(0)
+    const [PRECIO_VENTA] = useState(productos.find(product => product.id === producto.id)?.precio)
 
     useEffect(() => {
-        cargarPrecios()
-    }, [])
+        // Cambiamos 'find' a 'filter'
+        let findProducts = stocks.filter(
+            (stock) =>
+                stock.productoId === producto.id &&
+                stock.fecha.split(" ")[0] === producto.fecha?.split(" ")[0]
+        );
 
-    const precioProduct = precios.find((price) => price.productId === producto.id)
+        if (findProducts.length > 0) {
+            // Ahora sí puedes usar reduce, porque findProducts es un array
+            let totalSalida = findProducts.reduce(
+                (acc, item) => acc + item.cantidad,
+                0
+            );
+            setTOTAL_SALIDAS(totalSalida)
+        }
+
+
+    }, [stocks]);
 
 
     return (
@@ -110,12 +125,12 @@ const TableCellProduct = ({ producto, type }: PropsTable) => {
             <div onClick={() => { }} className={`col-start-4 text-center cursor-pointer text-lg col-end-5  ${type === "stock" ? "text-[#19AD0F]" : "text-[#0077FF]"}  font-semibold`}>
                 +{producto.stockEntrada ?? 0}
             </div>
-            <div onClick={() => { }} className="col-start-5 text-center cursor-pointer text-lg col-end-6 text-[#DD1313] font-semibold">
+            <div onClick={() => { }} className={`col-start-5 text-center cursor-pointer text-lg col-end-6 ${type == "stock" ? "text-[#19AD0F]" : "text-red-500"}  font-semibold`}>
                 {
-                    type == "stock" && <>-{producto.stockSalida ?? 0}</>
+                    type == "stock" && <>{producto.stockSalida ?? 0}</>
                 }
                 {
-                    type == "salida" && <>${producto.stockEntrada * precioProduct?.precioVenta!!}</>
+                    type == "salida" && <>${TOTAL_SALIDAS * PRECIO_VENTA!!}</>
                 }
             </div>
             <div onClick={() => { }} className="col-start-6 text-end cursor-pointer text-lg col-end-8 text-[#707070] font-light">

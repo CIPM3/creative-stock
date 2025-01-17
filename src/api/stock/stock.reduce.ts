@@ -1,12 +1,13 @@
+import { formatDate } from '@/funcs';
 import { db } from '@/libs/firebase'
-import { collection, addDoc, updateDoc, doc, increment } from 'firebase/firestore'
+import { collection, addDoc, updateDoc, doc } from 'firebase/firestore'
 
 
-export const reduceStockTransaction = async (productId: string, cantidad: number) => {
+export const reduceStockTransaction = async (productId: string, cantidad: number,stock:number) => {
     // Actualizar el stock del producto
     const productoRef = doc(db, 'productos', productId);
     await updateDoc(productoRef, {
-        stock: increment(-cantidad) // Usar increment directamente
+        stock: stock - cantidad // Usar increment directamente
     });
 
     // Registrar movimiento en la colección 'stock'
@@ -14,6 +15,6 @@ export const reduceStockTransaction = async (productId: string, cantidad: number
         productoId: productId,
         cantidad: cantidad,
         tipo: 'venta',
-        fecha: new Date()
+        fecha: formatDate(new Date())
     });
 }

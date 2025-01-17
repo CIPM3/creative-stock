@@ -1,7 +1,7 @@
 import { Calendario } from "@/assets/svg"
 import AnaliticasChart from "@/components/charts/analiticas.chart"
 import { formatDate, obtenerIconoServicio } from "@/funcs"
-import { useCitasStore, useServiciosStore, useStockStore } from "@/store/store"
+import { useCitasStore, usePOVStore, useServiciosStore, useStockStore } from "@/store/store"
 import { Servicio } from "@/types"
 import { BriefcaseBusiness, ListFilter, SquareKanban, TrendingDown, TrendingUp } from "lucide-react"
 import { useEffect, useState } from "react"
@@ -13,6 +13,8 @@ const Analiticas = () => {
   const serviciosById = useServiciosStore((state => state.getServicioById))
   const cargarServicios = useServiciosStore((state => state.cargarServicios))
   const cargarStock = useStockStore((state) => state.cargarStock)
+  const facturas = usePOVStore((s)=>s.facturas)
+  const cargarFacturas = usePOVStore((s)=>s.cargarFacturas)
 
   const FechaHoy = formatDate(new Date())
 
@@ -28,6 +30,7 @@ const Analiticas = () => {
     cargarStock()
     cargarServicios()
     cargarCitas()
+    cargarFacturas()
   }, [])
 
 
@@ -37,10 +40,14 @@ const Analiticas = () => {
       .map(servicioId => serviciosById(servicioId))
       .filter((servicio): servicio is Servicio => servicio !== null);
 
-    const totalSum = citas.reduce((acc, cita) => acc + (cita.total || 0), 0);
-    const totalSumMes = citas
-      .filter(cita => cita.fecha.split("/")[1] === String(new Date().getMonth() + 1).padStart(2, '0'))
-      .reduce((acc, cita) => acc + (cita.total || 0), 0);
+    //ESTOS DOS ARREGLAR
+    const totalSum = facturas
+      .filter((factura)=> factura.tipo === "Servicios")
+      .reduce((acc,factura)=> acc + (factura.total || 0),0)
+    
+    const totalSumMes = facturas
+      .filter(factura => factura?.fecha?.split("/")[1] === String(new Date().getMonth() + 1).padStart(2, '0'))
+      .reduce((acc, factura) => acc + (factura.total || 0), 0);
 
     const meses = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0'));
     const anioActual = FechaHoy.split(" ")[0].split("/")[2];
@@ -56,6 +63,7 @@ const Analiticas = () => {
       return { fecha: `${mes}/${anioActual}`, agendados }; // Retornar el mes con el total de agendados en formato mm/yy
     });
     
+    console.log(facturas)
 
     setAgendadosChart(datosPorMes);
 
@@ -63,7 +71,7 @@ const Analiticas = () => {
     setEntradaPorServicios(totalSum);
     setServicios(services);
 
-  }, [citas, serviciosById])
+  }, [citas, serviciosById,facturas])
 
   useEffect(() => {
     if (Servicios) {

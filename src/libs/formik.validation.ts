@@ -33,6 +33,8 @@ export const GIVProducts = (date?: Date, product?: Product) => ({
         `${date.getMinutes().toString().padStart(2, '0')} ` +
         `${date.getHours() >= 12 ? 'PM' : 'AM'}`
     ) || '',
+    total: product?.total || 0,
+    precio: product?.precio || 0
 })
 
 export const VSProducts = Yup.object().shape({
@@ -41,6 +43,7 @@ export const VSProducts = Yup.object().shape({
     stock: Yup.number().moreThan(0).required("El stock es obligatorio"),
     sells: Yup.number().moreThan(0).required("Las ventas son obligatorias"),
     incomes: Yup.number().moreThan(0).required("las entradas son obligatorias"),
+    total: Yup.number().moreThan(0).required("el precio de venta es obligatorio"),
 })
 
 export const GIVServicios = (servicio?: Servicio) => ({
@@ -48,12 +51,12 @@ export const GIVServicios = (servicio?: Servicio) => ({
     name: servicio?.name || '',
     category: servicio?.category || '',
     agendados: servicio?.agendados || 0,
-    total: servicio?.total || 0
+    total: servicio?.total || 0,
 })
 
 export const VSServicios = Yup.object().shape({
     name: Yup.string().required("El nombre del servicio es obligatorio"),
     category: Yup.string().required("la categoria del servicio es obligatoria"),
     agendados: Yup.number(),
-    total: Yup.number().required("el precio del servicio es obligatorio")
+    total: Yup.string().required("el precio del servicio es obligatorio")
 })
