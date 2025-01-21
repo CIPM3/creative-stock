@@ -24,7 +24,7 @@ const TableCategories = [
         svg: <StockSvg className="stroke-[#3C3C3C]" />
     },
     {
-        name: 'Ventas de hoy',
+        name: 'Ventas',
         svg: <VentasSvg className="fill-[#3C3C3C]" />
     },
     {

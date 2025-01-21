@@ -94,7 +94,8 @@ const TableCellProduct = ({ producto, type }: PropsTable) => {
         let findProducts = stocks.filter(
             (stock) =>
                 stock.productoId === producto.id &&
-                stock.fecha.split(" ")[0] === producto.fecha?.split(" ")[0]
+                stock.fecha.split(" ")[0] === producto.fecha?.split(" ")[0] &&
+                stock.tipo === "compra"
         );
 
         if (findProducts.length > 0) {

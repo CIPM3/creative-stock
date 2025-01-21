@@ -2,7 +2,7 @@ import { Entradas, Filter, StockSvg, VentasSvg } from "@/assets/svg"
 import EditarProductoTable from "@/components/dialog/editarProduct.dropdown"
 import AgregarStock from "@/components/dropdown/agregarStock.dialog"
 import { formatDate, getCatColors } from "@/funcs"
-import { useProductosStore, usePreciosStore, useStockStore } from "@/store/store"
+import { useProductosStore, useStockStore } from "@/store/store"
 import { useEffect, useState } from 'react';
 import { useParams } from "react-router-dom"
 
@@ -18,7 +18,6 @@ const Producto = () => {
     const selectedProduct = useProductosStore((state) => state.selectedProduct)
     const date = formatDate(new Date())
 
-    const precios = usePreciosStore((state) => state.precios)
     const stock = useStockStore((state) => state.stock)
     const cargarStock = useStockStore((state) => state.cargarStock)
 
@@ -32,7 +31,6 @@ const Producto = () => {
       });
     const [VENTAS_DEL_DIA, setVENTAS_DEL_DIA] = useState(0)
     const [SALIDAS_MES, setSALIDAS_MES] = useState(0)
-    const [PRECIO_PRODUCT, setPRECIO_PRODUCT] = useState(0)
 
     useEffect(() => {
         cargarStock();
@@ -45,42 +43,59 @@ const Producto = () => {
     }, [id])
 
     useEffect(() => {
-      setPRECIO_PRODUCT(selectedProduct?.precio!!)
-      setVENTAS_DEL_DIA(stats.ventasDelDia * Number(selectedProduct?.total!!))
-      setSALIDAS_MES(stats.salidasDelDia * Number(selectedProduct?.precio!!))
-    }, [stats])
+        if (!selectedProduct) return
+      
+        // Ventas del día en dinero
+        setVENTAS_DEL_DIA(
+          stats.ventasDelDia * selectedProduct.precio!!
+        )
+      
+        // Ventas del mes en dinero (si quisieras mostrarlo)
+        // setVENTAS_DEL_MES(
+        //   stats.ventasDelMes * selectedProduct.precio
+        // )
+      
+        // Entradas del día/mes en dinero, según la lógica
+        setSALIDAS_MES(
+          stats.salidasDelMes * selectedProduct.precio!!
+        )
+      }, [stats, selectedProduct])
+      
     
 
     const handleStockProduct = (transacciones: Stock[], date: Date, productId: string) => {
-        const hoy = date;
-        const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+  const hoy = date;
+  const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
 
-        let ventasDelDia = 0;
-        let ventasDelMes = 0;
-        let salidasDelDia = 0;
-        let salidasDelMes = 0;
+  let ventasDelDia = 0;
+  let ventasDelMes = 0;
+  let salidasDelDia = 0;
+  let salidasDelMes = 0;
 
-        transacciones
-            .filter(transaccion => transaccion.productoId === productId)
-            .forEach(transaccion => {
-                const fechaTransaccion = transaccion.fecha.split(" ")[0];
-                const [dia, mes, año] = fechaTransaccion.split("/").map(Number);
-                const fechaTransaccionDate = new Date(año + 2000, mes - 1, dia); // Ajuste para el año
+  transacciones
+    .filter(transaccion => transaccion.productoId === productId)
+    .forEach(transaccion => {
+      const fechaTransaccion = transaccion.fecha.split(" ")[0];
+      const [dia, mes, año] = fechaTransaccion.split("/").map(Number);
+      const fechaTransaccionDate = new Date(año + 2000, mes - 1, dia);
 
-                const esHoy = fechaTransaccionDate.toDateString() === hoy.toDateString();
-                const esEsteMes = fechaTransaccionDate >= inicioMes;
+      const esHoy = fechaTransaccionDate.toDateString() === hoy.toDateString();
+      const esEsteMes = fechaTransaccionDate >= inicioMes;
 
-                if (transaccion.tipo === "venta") {
-                    if (esHoy) ventasDelDia += transaccion.cantidad;
-                    if (esEsteMes) ventasDelMes += transaccion.cantidad;
-                } else if (transaccion.tipo === "compra") {
-                    if (esHoy) salidasDelDia += transaccion.cantidad;
-                    if (esEsteMes) salidasDelMes += transaccion.cantidad;
-                }
-            });
+      if (transaccion.tipo === "venta") {
+        // "venta" => ¿salida de stock?
+        if (esHoy) ventasDelDia += transaccion.cantidad;
+        if (esEsteMes) ventasDelMes += transaccion.cantidad;
+      } else if (transaccion.tipo === "compra") {
+        // "compra" => ¿entrada de stock?
+        if (esHoy) salidasDelDia += transaccion.cantidad;
+        if (esEsteMes) salidasDelMes += transaccion.cantidad;
+      }
+    })
 
-        return { ventasDelDia, ventasDelMes, salidasDelDia, salidasDelMes };
-    }
+  return { ventasDelDia, ventasDelMes, salidasDelDia, salidasDelMes };
+}
+
 
     return (
         <div className="w-full min-h-[90dvh]">
